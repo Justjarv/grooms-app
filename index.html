@@ -1,0 +1,2808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>GROOMS.</title>
+<!-- PWA Meta -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GROOMS.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1C1917">
+<meta name="description" content="The men's event concierge — plan, coordinate, and fund group events.">
+<!-- PWA Manifest (inline via data URI) -->
+<link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkdST09NUy4iLAogICJzaG9ydF9uYW1lIjogIkdST09NUyIsCiAgImRlc2NyaXB0aW9uIjogIlRoZSBtZW4ncyBldmVudCBjb25jaWVyZ2UiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI0ZGRkZGRiIsCiAgInRoZW1lX2NvbG9yIjogIiMxQzE5MTciLAogICJvcmllbnRhdGlvbiI6ICJwb3J0cmFpdCIsCiAgImljb25zIjogW10KfQ==">
+<!-- Touch icon placeholder (replace with real icon before launch) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%231C1917'/><text x='90' y='105' text-anchor='middle' fill='%23C4F438' font-size='48' font-weight='800' font-family='system-ui'>G.</text></svg>">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   CSS VARIABLE THEMING — swap these to re-brand
+   ═══════════════════════════════════════════ */
+:root {
+  /* Primary palette — Ramp-inspired light, clean, masculine */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F4;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #FAFAF9;
+  --border: #E7E5E4;
+  --border-light: #D6D3D1;
+
+  /* Accent — Ramp chartreuse */
+  --accent: #C4F438;
+  --accent-hover: #D4FF4A;
+  --accent-muted: #A3CC2E;
+  --accent-bg: rgba(196, 244, 56, 0.12);
+  --accent-text: #1C1917;
+
+  /* Text */
+  --text-primary: #1C1917;
+  --text-secondary: #57534E;
+  --text-muted: #78716C;
+  --text-dim: #A8A29E;
+
+  /* Semantic */
+  --success: #16A34A;
+  --success-bg: rgba(22, 163, 74, 0.08);
+  --warning: #CA8A04;
+  --danger: #DC2626;
+  --info: #2563EB;
+
+  /* Dark surface (for card, nav contrast) */
+  --surface-dark: #1C1917;
+  --surface-dark-secondary: #292524;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Font — clean sans, no serif */
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+html { overscroll-behavior: none; }
+html, body, #root { height: 100%; height: 100vh; height: 100dvh; width: 100%; }
+@media (min-width: 501px) { html, body, #root { overflow: auto; } }
+@media (max-width: 500px) { html, body, #root { overflow: hidden; } }
+body { font-family: var(--font-body); background: #F0EFED; margin: 0; }
+
+/* Phone frame for desktop */
+.phone-frame {
+  width: 390px; height: min(844px, calc(100vh - 40px));
+  background: var(--bg-primary);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 0 1px var(--border), 0 8px 40px rgba(0,0,0,0.12);
+  margin: 20px auto;
+}
+@media (max-width: 500px) {
+  .phone-frame { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; margin: 0; padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+  body { background: var(--bg-primary); }
+}
+
+.screen { height: 100%; max-height: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.screen-scroll { flex: 1 1 0; overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: 0; height: 0; padding-bottom: 8px; }
+.screen-scroll::-webkit-scrollbar { display: none; }
+
+/* Status bar — desktop shows fake notch, mobile uses real status bar */
+.status-bar { height: 54px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; background: var(--bg-primary); position: relative; z-index: 10; flex-shrink: 0; }
+.notch { width: 126px; height: 34px; background: var(--surface-dark); border-radius: 0 0 20px 20px; }
+@media (max-width: 500px) {
+  .status-bar { height: max(20px, env(safe-area-inset-top, 20px)); padding: 0; }
+  .notch { display: none; }
+}
+/* Standalone PWA mode — minimal status bar since OS handles it */
+@media (display-mode: standalone) {
+  .status-bar { height: env(safe-area-inset-top, 0px); padding: 0; }
+  .notch { display: none; }
+}
+
+/* Bottom nav */
+.bottom-nav { display: flex; background: var(--bg-primary); border-top: 1px solid var(--border); padding: 8px 0 28px; flex-shrink: 0; flex-grow: 0; z-index: 10; position: relative; }
+@media (max-width: 500px) {
+  .bottom-nav { padding-bottom: max(28px, env(safe-area-inset-bottom, 28px)); }
+}
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 4px 0; }
+.nav-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.nav-label { font-size: 10px; color: var(--text-muted); font-weight: 500; }
+.nav-item.active .nav-label { color: var(--text-primary); font-weight: 600; }
+.nav-item.active .nav-icon { color: var(--text-primary); }
+
+/* Buttons — min 44px touch target per Apple HIG */
+.btn-primary { background: var(--surface-dark); color: #fff; border: none; padding: 14px 24px; border-radius: var(--radius-full); font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.2s; font-family: var(--font-body); letter-spacing: -0.01em; min-height: 48px; }
+.btn-primary:hover { background: #292524; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-accent { background: var(--accent); color: var(--surface-dark); border: none; padding: 14px 24px; border-radius: var(--radius-full); font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.2s; font-family: var(--font-body); letter-spacing: -0.01em; min-height: 48px; }
+.btn-accent:hover { background: var(--accent-hover); }
+.btn-accent:active { transform: scale(0.98); }
+.btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border); padding: 12px 20px; border-radius: var(--radius-full); font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; transition: all 0.2s; font-family: var(--font-body); }
+.btn-secondary:hover { border-color: var(--text-primary); }
+.btn-sm { padding: 8px 16px; font-size: 13px; width: auto; }
+
+/* Cards */
+.card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+
+/* Input */
+.input-field { width: 100%; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 16px; color: var(--text-primary); font-size: 16px; outline: none; font-family: var(--font-body); -webkit-appearance: none; appearance: none; }
+.input-field:focus { border-color: var(--accent); }
+.input-field::placeholder { color: var(--text-dim); }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.fade-in { animation: fadeIn 0.3s ease-out; }
+.slide-up { animation: slideUp 0.4s ease-out; }
+
+/* Chat */
+.chat-bubble { border-radius: 18px; padding: 12px 16px; max-width: 85%; font-size: 14px; line-height: 1.5; animation: fadeIn 0.3s ease-out; }
+.chat-ai { background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary); align-self: flex-start; border-bottom-left-radius: 4px; }
+.chat-user { background: var(--surface-dark); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+/* Toggle */
+.toggle { width: 48px; height: 28px; border-radius: 14px; background: var(--border); cursor: pointer; position: relative; transition: 0.2s; }
+.toggle.on { background: var(--surface-dark); }
+.toggle::after { content: ''; width: 22px; height: 22px; border-radius: 50%; background: #fff; position: absolute; top: 3px; left: 3px; transition: 0.2s; }
+.toggle.on::after { left: 23px; }
+
+/* Ramp-style icon containers */
+.icon-box { width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; }
+.icon-box-accent { background: var(--accent); color: var(--surface-dark); }
+.icon-box-muted { background: var(--bg-secondary); color: var(--text-secondary); }
+.icon-box-dark { background: var(--surface-dark); color: #fff; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ═══════════════════════════════════════════
+// BRAND LOGO
+// ═══════════════════════════════════════════
+const LOGO_SRC = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTMxIiBoZWlnaHQ9IjE5MyIgdmlld0JveD0iMCAwIDEzMSAxOTMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik04MS4zIDE5Mi45SDQ5LjVDMzMuNyAxOTIuOSAyMS41IDE4OC43IDEyLjkgMTgwLjNDNC4zIDE3MS45IDAgMTU5LjggMCAxNDRWNDguOUMwIDMzLjEgNC4zIDIxIDEyLjkgMTIuNkMyMS41IDQuMiAzMy43IDAgNDkuNSAwSDgxLjNDOTYuOSAwIDEwOSA0LjMgMTE3LjYgMTIuOUMxMjYuMiAyMS4zIDEzMC41IDMzLjMgMTMwLjUgNDguOVY3Mi45QzEzMC41IDc3LjMgMTI4LjQgNzkuNSAxMjQuMiA3OS41SDk4LjdDOTQuNSA3OS41IDkyLjQgNzcuMyA5Mi40IDcyLjlWNTAuN0M5Mi40IDQ0LjMgOTEuMSAzOS44IDg4LjUgMzcuMkM4NS45IDM0LjQgODEuNCAzMyA3NSAzM0g1NS41QzQ5LjMgMzMgNDQuOCAzNC40IDQyIDM3LjJDMzkuNCAzOS44IDM4LjEgNDQuMyAzOC4xIDUwLjdWMTQyLjJDMzguMSAxNDguNiAzOS40IDE1My4yIDQyIDE1NkM0NC44IDE1OC42IDQ5LjMgMTU5LjkgNTUuNSAxNTkuOUg3NUM4MS40IDE1OS45IDg1LjkgMTU4LjYgODguNSAxNTZDOTEuMSAxNTMuMiA5Mi40IDE0OC42IDkyLjQgMTQyLjJWMTIzLjNDOTIuNCAxMjEuMSA5MS4zIDEyMCA4OS4xIDEyMEg1My4xQzQ4LjkgMTIwIDQ2LjggMTE3LjkgNDYuOCAxMTMuN1Y5My4zQzQ2LjggODkuMSA0OC45IDg3IDUzLjEgODdIMTIzLjZDMTI4LjIgODcgMTMwLjUgODkuMyAxMzAuNSA5My45VjE0NEMxMzAuNSAxNTkuNiAxMjYuMiAxNzEuNyAxMTcuNiAxODAuM0MxMDkgMTg4LjcgOTYuOSAxOTIuOSA4MS4zIDE5Mi45WiIgZmlsbD0iI0M0RjQzOCIvPgo8L3N2Zz4K";
+
+function Logo({ size = 28, style = {} }) {
+  return <img src={LOGO_SRC} alt="G" style={{ width: size, height: size * (193/131), objectFit: 'contain', ...style }} />;
+}
+
+// ═══════════════════════════════════════════
+// APP STATE & DATA
+// ═══════════════════════════════════════════
+const MARKETPLACE_ITEMS = [
+  { id: 1, cat: "Venues", name: "The Rustic Nashville", initial: "TR", price: "$2,500-$5,000", rating: 4.8, reviews: 342, url: "https://therustic.com/nashville", desc: "Upscale event venue with bourbon bar" },
+  { id: 2, cat: "Venues", name: "Rooftop at Bobby Hotel", initial: "BH", price: "$3,000-$6,000", rating: 4.9, reviews: 218, url: "https://www.bobbyhotel.com", desc: "Downtown rooftop with skyline views" },
+  { id: 3, cat: "Restaurants", name: "Husk Nashville", initial: "HN", price: "$$$$", rating: 4.7, reviews: 1205, url: "https://www.opentable.com/r/husk-nashville", desc: "Farm-to-table Southern cuisine", affiliate: "OpenTable" },
+  { id: 4, cat: "Restaurants", name: "Martin's Bar-B-Que", initial: "MB", price: "$$", rating: 4.6, reviews: 3421, url: "https://www.martinsbbqjoint.com", desc: "Whole-hog BBQ legend" },
+  { id: 14, cat: "Restaurants", name: "Kayne Prime", initial: "KP", price: "$$$$", rating: 4.9, reviews: 1870, url: "https://www.opentable.com/kayne-prime", desc: "Upscale steakhouse — group private dining", affiliate: "OpenTable" },
+  { id: 15, cat: "Restaurants", name: "The Catbird Seat", initial: "CS", price: "$$$$", rating: 4.9, reviews: 620, url: "https://www.opentable.com/the-catbird-seat", desc: "27-seat chef's counter — unforgettable experience", affiliate: "OpenTable" },
+  { id: 16, cat: "Restaurants", name: "Merchants Restaurant", initial: "MR", price: "$$$", rating: 4.5, reviews: 2840, url: "https://www.opentable.com/merchants-restaurant", desc: "Historic Broadway steakhouse with private rooms", affiliate: "OpenTable" },
+  { id: 17, cat: "Restaurants", name: "Bourbon Steak Nashville", initial: "BS", price: "$$$$", rating: 4.8, reviews: 1420, url: "https://www.opentable.com/r/bourbon-steak-nashville", desc: "Michael Mina's steakhouse at JW Marriott", affiliate: "OpenTable" },
+  { id: 5, cat: "Activities", name: "Nelson's Green Brier Distillery", initial: "GB", price: "$35/person", rating: 4.8, reviews: 891, url: "https://www.greenbrierdistillery.com", desc: "Bourbon trail experience" },
+  { id: 6, cat: "Activities", name: "TopGolf Nashville", initial: "TG", price: "$50/person", rating: 4.5, reviews: 2104, url: "https://topgolf.com/us/nashville", desc: "Golf entertainment complex" },
+  { id: 18, cat: "Activities", name: "Nashville Barrel House", initial: "NB", price: "$55/person", rating: 4.7, reviews: 430, url: "https://www.nashvillebarrelhouse.com", desc: "Private barrel picks and bourbon blending" },
+  { id: 7, cat: "Gifts", name: "Leather Dopp Kit — Personalized", initial: "DK", price: "$85", rating: 4.9, reviews: 456, url: "https://www.etsy.com/search?q=personalized+dopp+kit", desc: "Full-grain leather with monogram" },
+  { id: 8, cat: "Gifts", name: "Custom Flask Set (8pc)", initial: "FS", price: "$120", rating: 4.7, reviews: 312, url: "https://www.etsy.com/search?q=groomsmen+flask+set", desc: "Engraved stainless steel set" },
+  { id: 9, cat: "Grooming", name: "Grooming Box — Wedding Day", initial: "GR", price: "$65", rating: 4.6, reviews: 189, url: "https://www.birchbox.com", desc: "Premium grooming essentials kit" },
+  { id: 10, cat: "Stays", name: "Graduate Nashville", initial: "GN", price: "$189/night", rating: 4.7, reviews: 2340, url: "https://www.graduatehotels.com/nashville", desc: "Boutique hotel near Vanderbilt", affiliate: "Booking.com" },
+  { id: 19, cat: "Stays", name: "Thompson Nashville", initial: "TN", price: "$279/night", rating: 4.8, reviews: 1850, url: "https://www.hyatt.com/thompson/nashville", desc: "Gulch rooftop — best views in the city", affiliate: "Booking.com" },
+];
+
+const EVENT_TEMPLATES = [
+  { id: "bachelor-classic", name: "Classic Bachelor Weekend", duration: "2 nights", activities: ["Bourbon Trail", "Steakhouse Dinner", "Rooftop Bar", "Golf Morning"], budget: "$250-$400/person", icon: "CB", eventType: "wedding" },
+  { id: "bachelor-adventure", name: "Adventure Bachelor", duration: "3 nights", activities: ["Hiking/Rafting", "Campfire BBQ", "Brewery Tour", "Shooting Range"], budget: "$300-$500/person", icon: "AB", eventType: "wedding" },
+  { id: "bachelor-vegas", name: "Vegas-Style Night", duration: "1 night", activities: ["VIP Table Service", "Group Dinner", "Late Night", "Recovery Brunch"], budget: "$200-$600/person", icon: "VS", eventType: "wedding" },
+  { id: "rehearsal-dinner", name: "Rehearsal Dinner", duration: "1 evening", activities: ["Private Dining", "Toasts & Speeches", "Photo Slideshow"], budget: "$100-$200/person", icon: "RD", eventType: "wedding" },
+  { id: "groomsmen-day", name: "Groomsmen Day Out", duration: "1 day", activities: ["Golf Round", "Craft Beer Tasting", "Cigar Lounge"], budget: "$150-$250/person", icon: "GO", eventType: "general" },
+  { id: "guys-weekend", name: "Guys Trip Weekend", duration: "2 nights", activities: ["Bar Crawl", "Golf Round", "Group Dinner", "Late Night"], budget: "$200-$400/person", icon: "GT", eventType: "guys-trip" },
+  { id: "birthday-night", name: "Birthday Celebration", duration: "1 night", activities: ["VIP Dinner", "Rooftop Bar", "Late Night Out"], budget: "$150-$300/person", icon: "BD", eventType: "birthday" },
+];
+
+const AI_RESPONSES = {
+  greeting: "What's up — I'm your Grooms concierge. I can help plan events, find spots, manage the boys, and handle the details. What are we working on?",
+  bachelor: "Let's go. I'd start with a template — Classic Weekend, Adventure Trip, or Vegas Night. Or I can custom-build something. What's the vibe?",
+  nashville: "Nashville is perfect. Based on your location, here's what I'd recommend:\n\nNelson's Green Brier Distillery — $35/person\nHusk Nashville — reservable via OpenTable\nBobby Hotel Rooftop — great group space\n\nWant me to build a full itinerary around these?",
+  budget: "Smart. I'll keep everything within budget. Here's a rough split:\n\nHotel: $189/night × 2 = $378 (split 4 ways = $95)\nActivities: $85/person\nDining: $120/person\n\nTotal: ~$300/person for 2 nights. Should I send this to the crew for a vote?",
+  crew: "On it. Each one of the boys gets a link to join, see the plan, vote on stuff, and split costs. How many are we adding?",
+  gifts: "Here are the top-rated groomsmen gifts in Discover:\n\nLeather Dopp Kit — $85 (personalized)\nCustom Flask Set — $120 (8-piece)\nGrooming Box — $65\n\nAll can be personalized with names. Want me to set up a gift list?",
+  card: "The Ventura Onyx is a debit card funded by the crew. When they chip in, money loads straight to your card. Every transaction is visible to contributors in real time — full transparency. You can send expense reports anytime so nobody has to wonder where the money went.",
+  payment: "Each of the boys gets a link to chip in. Money goes straight to your Ventura Onyx. Every deposit and every purchase is tracked and visible to the crew. Send expense reports from the card settings to keep everyone in the loop.",
+  style: "You can set the wedding style rules from your home screen — colors, dress code, and specific attire notes. Once locked in, every crew member sees them when they open the app. Navy and champagne is popular this year. Want me to suggest a palette?",
+  fallback: "This is a prototype and AI will be completed as part of the build.",
+};
+
+const AI_KEYWORDS = {
+  bachelor: ["bachelor", "party", "weekend", "trip", "plan"],
+  nashville: ["nashville", "venue", "where", "location", "place", "restaurant"],
+  budget: ["budget", "cost", "price", "afford", "spend", "money", "per person"],
+  crew: ["crew", "groomsmen", "invite", "guys", "friends", "group", "squad"],
+  gifts: ["gift", "present", "groomsmen gift", "flask", "leather"],
+  card: ["card", "debit", "onyx", "ventura", "spend"],
+  payment: ["pay", "venmo", "split", "collect", "contribute", "chip in", "pool"],
+  style: ["style", "dress code", "color", "attire", "suit", "tux", "outfit", "wear", "colors"],
+};
+
+function matchAI(input) {
+  const lower = input.toLowerCase();
+  for (const [key, words] of Object.entries(AI_KEYWORDS)) {
+    if (words.some(w => lower.includes(w))) return AI_RESPONSES[key];
+  }
+  return AI_RESPONSES.fallback;
+}
+
+// ═══════════════════════════════════════════
+// COMPONENTS
+// ═══════════════════════════════════════════
+
+function StatusBar() {
+  return <div className="status-bar"><div className="notch"></div></div>;
+}
+
+function BottomNav({ active, onNav, hasCard, isGroomsman = false }) {
+  const items = isGroomsman ? [
+    { key: "home", icon: "⌂", label: "Home" },
+    { key: "marketplace", icon: "◎", label: "Discover" },
+    { key: "chat", icon: "◬", label: "Concierge" },
+  ] : [
+    { key: "home", icon: "⌂", label: "Home" },
+    { key: "events", icon: "▦", label: "Events" },
+    { key: "card", icon: "◈", label: "Card", hidden: !hasCard },
+    { key: "marketplace", icon: "◎", label: "Discover" },
+    { key: "chat", icon: "◬", label: "Concierge" },
+  ].filter(i => !i.hidden);
+  return (
+    <div className="bottom-nav">
+      {items.map(i => (
+        <div key={i.key} className={`nav-item ${active === i.key ? 'active' : ''}`} onClick={() => onNav(i.key)}>
+          <div className="nav-icon">{i.icon}</div>
+          <div className="nav-label">{i.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── SPLASH ──
+function SplashScreen({ onStart }) {
+  return (
+    <div className="screen" style={{ background: 'var(--surface-dark)', justifyContent: 'center', alignItems: 'center', padding: 40 }}>
+      <div className="slide-up" style={{ textAlign: 'center' }}>
+        <div style={{ width: 64, height: 64, borderRadius: 16, background: 'var(--surface-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', padding: 12 }}>
+          <Logo size={32} />
+        </div>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 42, color: '#FAFAF9', marginBottom: 8, fontWeight: 800, letterSpacing: -1 }}>GROOMS.</h1>
+        <p style={{ color: '#78716C', fontSize: 14, marginBottom: 48, letterSpacing: 0.5, fontWeight: 500 }}>His crew. His moment. Handled.</p>
+        <button className="btn-accent" onClick={onStart} style={{ maxWidth: 280 }}>Get Started</button>
+        <p style={{ color: '#57534E', fontSize: 12, marginTop: 16 }}>Already have an account? <span style={{ color: 'var(--accent)', cursor: 'pointer', fontWeight: 600 }} onClick={onStart}>Sign in</span></p>
+      </div>
+    </div>
+  );
+}
+
+// ── ONBOARDING ──
+function OnboardingScreen({ onComplete }) {
+  const [step, setStep] = useState(0);
+  const [role, setRole] = useState('');
+  const [eventType, setEventType] = useState('');
+  const [name, setName] = useState('');
+  const [partnerName, setPartnerName] = useState('');
+  const [eventDate, setEventDate] = useState('');
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [location, setLocation] = useState('Nashville, TN');
+  const [locationDetected, setLocationDetected] = useState(false);
+  // Wedding style (collected during onboarding for wedding users)
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [dressCode, setDressCode] = useState('');
+  const [attireNotes, setAttireNotes] = useState('');
+  const [weddingVenue, setWeddingVenue] = useState('');
+
+  const isGroomsmanRole = role === 'groomsman';
+  const isGroom = role === 'groom' || role === 'groomsman';
+  const isWedding = eventType === 'wedding';
+
+  // Location detection — both flows show location on step 3
+  useEffect(() => {
+    if (step === 3) {
+      setTimeout(() => setLocationDetected(true), 1500);
+    }
+  }, [step]);
+
+  const EVENT_TYPES = [
+    { val: 'wedding', label: "Wedding", desc: isGroom ? "Set up the wedding, then plan events around it" : "Plan his events, stay in the loop", featured: true },
+    { val: 'guys-trip', label: "Guys Trip", desc: "Weekend away with the boys" },
+    { val: 'birthday', label: "Birthday", desc: "Milestone celebration" },
+    { val: 'general', label: "Just Getting Together", desc: "No occasion needed" },
+  ];
+
+  const COLOR_SWATCHES = [
+    { name: 'Navy', hex: '#1E3A5F' },
+    { name: 'Charcoal', hex: '#3D3D3D' },
+    { name: 'Burgundy', hex: '#722F37' },
+    { name: 'Hunter', hex: '#2D5A27' },
+    { name: 'Slate', hex: '#6A7B8B' },
+    { name: 'Gold', hex: '#D4AF37' },
+    { name: 'Dusty Rose', hex: '#C4A484' },
+    { name: 'Black', hex: '#1C1917' },
+    { name: 'Ivory', hex: '#FFFFF0' },
+    { name: 'Sage', hex: '#8A9A5B' },
+    { name: 'Lavender', hex: '#967BB6' },
+    { name: 'Terra', hex: '#C2693D' },
+  ];
+
+  const DRESS_CODES = [
+    { val: 'black-tie', label: 'Black Tie', desc: 'Tuxedos, formal gowns' },
+    { val: 'formal', label: 'Formal', desc: 'Dark suits, ties required' },
+    { val: 'semi-formal', label: 'Semi-Formal', desc: 'Suits, no tie necessary' },
+    { val: 'smart-casual', label: 'Smart Casual', desc: 'Sport coats, chinos OK' },
+    { val: 'casual', label: 'Casual', desc: 'Clean and put together' },
+  ];
+
+  // Groomsmen requirements — what the groom selects as required
+  const GROOMSMEN_REQUIREMENTS = [
+    { key: 'tux', label: 'Tux / Suit Rental', desc: 'Rent or purchase their suit or tuxedo', icon: '🤵' },
+    { key: 'shoes', label: 'Dress Shoes', desc: 'Specific footwear to match the dress code', icon: '👞' },
+    { key: 'grooming', label: 'Grooming', desc: 'Haircut, shave, or grooming appointment', icon: '💈' },
+    { key: 'rsvp', label: 'RSVP Confirmation', desc: 'Confirm attendance to key events', icon: '✉️' },
+    { key: 'gift', label: 'Group Gift Contribution', desc: 'Chip in for the couple\'s gift', icon: '🎁' },
+    { key: 'travel', label: 'Travel & Lodging', desc: 'Book flights, hotel, or Airbnb', icon: '✈️' },
+    { key: 'fitting', label: 'Fitting Appointment', desc: 'Schedule and complete their fitting', icon: '📐' },
+    { key: 'accessories', label: 'Accessories', desc: 'Tie, cufflinks, pocket square, etc.', icon: '👔' },
+  ];
+  const [selectedReqs, setSelectedReqs] = useState(['tux', 'shoes', 'rsvp']); // sensible defaults
+
+  const toggleReq = (key) => {
+    setSelectedReqs(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
+  };
+
+  const toggleColor = (hex) => {
+    setSelectedColors(prev =>
+      prev.includes(hex) ? prev.filter(c => c !== hex) : prev.length < 4 ? [...prev, hex] : prev
+    );
+  };
+
+  const finishOnboarding = () => {
+    const styleData = isWedding ? { colors: selectedColors, dressCode, attireNotes } : null;
+    const crewWasInvited = isWedding && crewInviteSent;
+    const reqs = isWedding ? selectedReqs : null;
+    onComplete({ role, eventType, name, partnerName, eventDate, location, weddingVenue, weddingStyle: styleData, crewInvited: crewWasInvited, groomsmenReqs: reqs });
+  };
+
+  // ═══════════════════════════════════════════
+  // STEP DEFINITIONS — wedding vs. general flows
+  // ═══════════════════════════════════════════
+
+  // Step 0: Who are you? (all flows)
+  const step0 = (
+    <div key="0" className="fade-in" style={{ padding: '40px 24px', textAlign: 'center' }}>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, color: 'var(--text-primary)', marginBottom: 8, fontWeight: 700, letterSpacing: -0.5 }}>Who are you?</h2>
+      <p style={{ color: 'var(--text-muted)', marginBottom: 32, fontSize: 14 }}>We'll personalize your experience</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {[
+          { val: 'groom', initial: 'G', label: "I'm the guy planning", desc: 'Set up events, manage the crew' },
+          { val: 'bride', initial: 'B', label: "I'm setting this up for him", desc: "Get him started — you'll have access too" },
+          { val: 'groomsman', initial: 'C', label: "I was invited", desc: 'Join a crew, vote, and coordinate' },
+        ].map(r => (
+          <div key={r.val} className="card" onClick={() => { setRole(r.val); setStep(1); }}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16, transition: '0.2s',
+                     border: role === r.val ? '2px solid var(--surface-dark)' : '1px solid var(--border)',
+                     background: role === r.val ? 'var(--accent-bg)' : 'var(--bg-card)' }}>
+            <div style={{ width: 44, height: 44, borderRadius: 10, background: role === r.val ? 'var(--surface-dark)' : 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: role === r.val ? 'var(--accent)' : 'var(--text-secondary)', fontSize: 18, fontWeight: 700 }}>{r.initial}</div>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 16 }}>{r.label}</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>{r.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // Step 1: What's the occasion? (all flows)
+  const step1 = (
+    <div key="1" className="fade-in" style={{ padding: '40px 24px' }}>
+      <div onClick={() => setStep(0)} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 16, fontWeight: 500 }}>← Back</div>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, color: 'var(--text-primary)', marginBottom: 8, fontWeight: 700, letterSpacing: -0.5 }}>What's the occasion?</h2>
+      <p style={{ color: 'var(--text-muted)', marginBottom: 24, fontSize: 14 }}>{isGroom ? "Pick one to get started — you can always add more later" : "What are you planning for?"}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {EVENT_TYPES.map(t => (
+          <div key={t.val} className="card" onClick={() => { setEventType(t.val); setStep(2); }}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, transition: '0.2s',
+                     border: eventType === t.val ? '2px solid var(--surface-dark)' : t.featured ? '1px solid var(--border-light)' : '1px solid var(--border)',
+                     background: eventType === t.val ? 'var(--accent-bg)' : 'var(--bg-card)' }}>
+            <div style={{ width: 40, height: 40, borderRadius: 10,
+                          background: t.featured ? 'var(--surface-dark)' : 'var(--bg-secondary)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: t.featured ? 'var(--accent)' : 'var(--text-muted)',
+                          fontSize: 13, fontWeight: 700 }}>{t.val === 'wedding' ? 'W' : t.val === 'guys-trip' ? 'GT' : t.val === 'birthday' ? 'BD' : 'G'}</div>
+            <div style={{ textAlign: 'left', flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 15 }}>{t.label}</span>
+                {t.featured && <span style={{ background: 'var(--accent)', color: 'var(--surface-dark)', fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 'var(--radius-full)' }}>POPULAR</span>}
+              </div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>{t.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // Step 2: Your name (all flows — account setup)
+  const step2 = (
+    <div key="2" className="fade-in" style={{ padding: '40px 24px' }}>
+      <div onClick={() => setStep(1)} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 16, fontWeight: 500 }}>← Back</div>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, color: 'var(--text-primary)', marginBottom: 8, fontWeight: 700, letterSpacing: -0.5 }}>What's your name?</h2>
+      <p style={{ color: 'var(--text-muted)', marginBottom: 24, fontSize: 14 }}>
+        {role === 'bride' ? "We'll set things up for you and your groom" : "Let's personalize your experience"}
+      </p>
+      <input className="input-field" placeholder="Your first name" value={name} onChange={e => setName(e.target.value)} autoFocus style={{ marginBottom: 24 }} />
+      <button className="btn-primary" onClick={() => isGroomsmanRole ? finishOnboarding() : setStep(3)} disabled={!name} style={{ opacity: name ? 1 : 0.5 }}>{isGroomsmanRole ? "Let's Go" : "Continue"}</button>
+    </div>
+  );
+
+  // ─── WEDDING FLOW: Steps 3-5 ───
+
+  // Wedding Step 3: Wedding Details + Invite Partner
+  const weddingStep3 = (
+    <div key="w3" className="fade-in" style={{ padding: '24px 24px 40px' }}>
+      <div onClick={() => setStep(2)} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 16, fontWeight: 500 }}>← Back</div>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.5 }}>
+        {isGroom ? "Set up the wedding" : "Wedding details"}
+      </h2>
+      <p style={{ color: 'var(--text-muted)', marginBottom: 24, fontSize: 14 }}>
+        {isGroom ? "Lock in the basics — everything else builds from here." : "Enter the key details so we can help plan around them."}
+      </p>
+
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8 }}>YOUR PARTNER</div>
+      <input className="input-field" placeholder={role === 'bride' ? "Groom's name" : "Partner's name"} value={partnerName} onChange={e => setPartnerName(e.target.value)} style={{ marginBottom: 16 }} />
+
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8 }}>WEDDING DATE</div>
+      <input className="input-field" type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} style={{ marginBottom: 16 }} />
+
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8 }}>WEDDING LOCATION</div>
+      <input className="input-field" placeholder="City — e.g. Nashville, TN" value={location} onChange={e => setLocation(e.target.value)} style={{ marginBottom: 16 }} />
+
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8 }}>VENUE</div>
+      <input className="input-field" placeholder="Venue name (optional)" value={weddingVenue} onChange={e => setWeddingVenue(e.target.value)} style={{ marginBottom: 16 }} />
+
+      {/* Invite Partner — part of wedding details */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8 }}>
+        {isGroom ? `INVITE ${(partnerName || 'YOUR PARTNER').toUpperCase()} (OPTIONAL)` : `INVITE ${(partnerName || 'THE GROOM').toUpperCase()}`}
+      </div>
+      <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 8 }}>
+        {isGroom ? `${partnerName || 'She'}'ll get view access to help coordinate.` : `${partnerName || 'He'}'ll get his own dashboard.`}
+      </p>
+      <input className="input-field" type="email" placeholder={`${partnerName || 'Partner'}'s email`} value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} style={{ marginBottom: 24 }} />
+
+      <button className="btn-primary" onClick={() => {
+        if (inviteEmail) alert(`Invite sent to ${inviteEmail}! (Prototype — no actual email sent)`);
+        setStep(4);
+      }}>Continue to Style Rules</button>
+      <div style={{ height: 40 }} />
+    </div>
+  );
+
+  // Wedding Step 4: Style & Dress Code (clean, no invite)
+  const weddingStep4 = (
+    <div key="w4" className="fade-in" style={{ padding: '24px 24px 40px' }}>
+      <div onClick={() => setStep(3)} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 16, fontWeight: 500 }}>← Back</div>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.5 }}>
+        {isGroom ? "Set the rules" : "Style & dress code"}
+      </h2>
+      <p style={{ color: 'var(--text-muted)', marginBottom: 20, fontSize: 14 }}>
+        {isGroom ? "Colors, dress code — so the boys know what's up." : "Define the look so everyone shows up right."}
+      </p>
+
+      {/* Wedding Colors */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8 }}>WEDDING COLORS</div>
+      <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 10 }}>Pick up to 4</p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+        {COLOR_SWATCHES.map(c => {
+          const sel = selectedColors.includes(c.hex);
+          return (
+            <div key={c.hex} onClick={() => toggleColor(c.hex)} style={{ cursor: 'pointer', textAlign: 'center', width: 56 }}>
+              <div style={{
+                width: 44, height: 44, borderRadius: 10, background: c.hex, margin: '0 auto 3px',
+                border: sel ? '3px solid var(--surface-dark)' : c.hex === '#FFFFF0' ? '1px solid var(--border)' : '1px solid transparent',
+                boxShadow: sel ? '0 0 0 2px var(--accent)' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.2s'
+              }}>
+                {sel && <span style={{ color: c.hex === '#1C1917' || c.hex === '#1E3A5F' || c.hex === '#3D3D3D' || c.hex === '#722F37' || c.hex === '#2D5A27' ? '#fff' : '#1C1917', fontSize: 14, fontWeight: 700 }}>✓</span>}
+              </div>
+              <div style={{ color: sel ? 'var(--text-primary)' : 'var(--text-muted)', fontSize: 9, fontWeight: sel ? 600 : 400 }}>{c.name}</div>
+            </div>
+          );
+        })}
+      </div>
+      {selectedColors.length > 0 && (
+        <div className="fade-in" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16, padding: '8px 12px', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+          <span style={{ color: 'var(--text-muted)', fontSize: 11, fontWeight: 500 }}>Palette:</span>
+          {selectedColors.map((hex, i) => <div key={i} style={{ width: 20, height: 20, borderRadius: 5, background: hex, border: hex === '#FFFFF0' ? '1px solid var(--border)' : 'none' }} />)}
+        </div>
+      )}
+
+      {/* Dress Code */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8, marginTop: 8 }}>DRESS CODE</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+        {DRESS_CODES.map(d => (
+          <div key={d.val} onClick={() => setDressCode(d.val)}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 'var(--radius-md)', transition: '0.2s',
+                     border: dressCode === d.val ? '2px solid var(--surface-dark)' : '1px solid var(--border)',
+                     background: dressCode === d.val ? 'var(--accent-bg)' : 'var(--bg-card)' }}>
+            <div style={{ width: 32, height: 32, borderRadius: 7,
+                          background: dressCode === d.val ? 'var(--surface-dark)' : 'var(--bg-secondary)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: dressCode === d.val ? 'var(--accent)' : 'var(--text-muted)',
+                          fontSize: 10, fontWeight: 700 }}>
+              {d.val === 'black-tie' ? 'BT' : d.val === 'formal' ? 'FM' : d.val === 'semi-formal' ? 'SF' : d.val === 'smart-casual' ? 'SC' : 'CS'}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 13 }}>{d.label}</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>{d.desc}</div>
+            </div>
+            {dressCode === d.val && <span style={{ color: 'var(--surface-dark)', fontSize: 14, fontWeight: 700 }}>✓</span>}
+          </div>
+        ))}
+      </div>
+
+      {/* Attire Notes */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8 }}>ATTIRE NOTES</div>
+      <textarea className="input-field" placeholder={isGroom ? "e.g. Navy suits, no black. Champagne ties." : "e.g. Navy suits, champagne ties."} value={attireNotes}
+                onChange={e => setAttireNotes(e.target.value)} rows={2} style={{ resize: 'none', marginBottom: 24 }} />
+
+      <button className="btn-primary" onClick={() => setStep(5)}>Continue — Set Requirements</button>
+      <button className="btn-secondary" onClick={() => setStep(5)} style={{ marginTop: 8 }}>Skip style for now</button>
+      <div style={{ height: 40 }} />
+    </div>
+  );
+
+  // Wedding Step 5: Groomsmen Requirements — what's required of each groomsman
+  const weddingStep5 = (
+    <div key="w5" className="fade-in" style={{ padding: '24px 24px 40px' }}>
+      <div onClick={() => setStep(4)} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 16, fontWeight: 500 }}>← Back</div>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.5 }}>
+        {isGroom ? "What do the boys need to handle?" : "Groomsmen requirements"}
+      </h2>
+      <p style={{ color: 'var(--text-muted)', marginBottom: 20, fontSize: 14 }}>
+        {isGroom ? "Pick what's required — this becomes their checklist and drives Discover." : "Select what each groomsman needs to complete."}
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+        {GROOMSMEN_REQUIREMENTS.map(req => {
+          const sel = selectedReqs.includes(req.key);
+          return (
+            <div key={req.key} onClick={() => toggleReq(req.key)}
+              style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 'var(--radius-md)', transition: '0.2s',
+                       border: sel ? '2px solid var(--surface-dark)' : '1px solid var(--border)',
+                       background: sel ? 'var(--accent-bg)' : 'var(--bg-card)' }}>
+              <div style={{ fontSize: 20, width: 36, textAlign: 'center', flexShrink: 0 }}>{req.icon}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 13 }}>{req.label}</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>{req.desc}</div>
+              </div>
+              <div style={{ width: 24, height: 24, borderRadius: 6,
+                            background: sel ? 'var(--surface-dark)' : 'var(--bg-secondary)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: sel ? 'var(--accent)' : 'transparent',
+                            fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
+                {sel ? '✓' : ''}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {selectedReqs.length > 0 && (
+        <div className="fade-in" style={{ background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', padding: '10px 14px', marginBottom: 20 }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>{selectedReqs.length} REQUIREMENT{selectedReqs.length !== 1 ? 'S' : ''} SELECTED</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+            {selectedReqs.map(key => {
+              const req = GROOMSMEN_REQUIREMENTS.find(r => r.key === key);
+              return <span key={key} style={{ fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 'var(--radius-full)', background: 'var(--surface-dark)', color: 'var(--accent)' }}>{req?.label}</span>;
+            })}
+          </div>
+        </div>
+      )}
+
+      <button className="btn-primary" onClick={() => setStep(6)}>Continue — Invite the Boys</button>
+      <button className="btn-secondary" onClick={() => setStep(6)} style={{ marginTop: 8 }}>Skip — use defaults</button>
+      <div style={{ height: 40 }} />
+    </div>
+  );
+
+  // Wedding Step 6: Invite the Boys — dedicated, explains what they get
+  const [crewEmails, setCrewEmails] = useState('');
+  const [crewInviteSent, setCrewInviteSent] = useState(false);
+
+  const weddingStep6 = (
+    <div key="w6" className="fade-in" style={{ padding: '24px 24px 40px' }}>
+      <div onClick={() => setStep(5)} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 16, fontWeight: 500 }}>← Back</div>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.5 }}>
+        {isGroom ? "Get the boys in" : "Invite the groomsmen"}
+      </h2>
+      <p style={{ color: 'var(--text-muted)', marginBottom: 20, fontSize: 14 }}>
+        {isGroom ? "This is the last step — once they're in, everyone's locked." : "Add the crew so they can start coordinating."}
+      </p>
+
+      {/* What they get access to */}
+      <div className="card" style={{ marginBottom: 20, background: 'var(--surface-dark)', border: 'none' }}>
+        <div style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>WHAT EACH GROOMSMAN GETS</div>
+        {[
+          { icon: 'SR', label: 'Style rules & dress code', desc: 'Colors, attire requirements — no guessing' },
+          { icon: 'MP', label: 'Discover access', desc: 'Browse vendors, restaurants, and services in-app' },
+          { icon: 'CL', label: `Personal checklist (${selectedReqs.length} items)`, desc: selectedReqs.map(k => GROOMSMEN_REQUIREMENTS.find(r => r.key === k)?.label).filter(Boolean).join(', ') },
+          { icon: 'DB', label: 'Personal dashboard', desc: 'Their own view — tasks, status, what\'s needed' },
+          { icon: 'TR', label: 'Activity tracking', desc: 'You see who\'s handled what — they see their progress' },
+        ].map((item, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: i < 4 ? '1px solid var(--surface-dark-secondary)' : 'none' }}>
+            <div style={{ width: 32, height: 32, borderRadius: 7, background: 'var(--surface-dark-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)', fontSize: 10, fontWeight: 700, flexShrink: 0 }}>{item.icon}</div>
+            <div>
+              <div style={{ color: '#FAFAF9', fontWeight: 600, fontSize: 13 }}>{item.label}</div>
+              <div style={{ color: '#78716C', fontSize: 11 }}>{item.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Email input */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8 }}>
+        {isGroom ? 'DROP THEIR EMAILS' : 'ENTER EMAILS'}
+      </div>
+      <textarea className="input-field" placeholder={"best-man@email.com\ngroomsman1@email.com\ngroomsman2@email.com"} value={crewEmails}
+                onChange={e => setCrewEmails(e.target.value)} rows={4} style={{ resize: 'none', marginBottom: 12 }} />
+
+      {crewInviteSent ? (
+        <div className="card fade-in" style={{ background: 'var(--success-bg)', border: '1px solid var(--success)', marginBottom: 16, textAlign: 'center', padding: 16 }}>
+          <div style={{ color: 'var(--success)', fontWeight: 700, fontSize: 16 }}>✓ Invites sent</div>
+          <div style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 4 }}>{crewEmails.split('\n').filter(e => e.trim()).length} groomsmen will get a link to join</div>
+          <div style={{ color: 'var(--text-dim)', fontSize: 11, marginTop: 4 }}>(Prototype — no actual emails sent)</div>
+        </div>
+      ) : null}
+
+      <button className="btn-primary" onClick={() => {
+        const emailCount = crewEmails.split('\n').filter(e => e.trim()).length;
+        if (emailCount > 0 && !crewInviteSent) {
+          setCrewInviteSent(true);
+        } else {
+          finishOnboarding();
+        }
+      }} style={{ marginBottom: 10 }}>
+        {crewInviteSent ? "Let's Go — Wedding is Set Up" : `Send ${crewEmails.split('\n').filter(e => e.trim()).length || ''} Invite${crewEmails.split('\n').filter(e => e.trim()).length !== 1 ? 's' : ''}`}
+      </button>
+      {!crewInviteSent && <button className="btn-secondary" onClick={finishOnboarding}>I'll add them later</button>}
+      <div style={{ height: 40 }} />
+    </div>
+  );
+
+  // ─── GENERAL FLOW: Steps 3-4 ───
+
+  const generalStep3 = (
+    <div key="g3" className="fade-in" style={{ padding: '40px 24px' }}>
+      <div onClick={() => setStep(2)} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 16, fontWeight: 500 }}>← Back</div>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, color: 'var(--text-primary)', marginBottom: 8, fontWeight: 700, letterSpacing: -0.5 }}>
+        {eventType === 'birthday' ? "When's the birthday?" : "When's it happening?"}
+      </h2>
+      <p style={{ color: 'var(--text-muted)', marginBottom: 24, fontSize: 14 }}>We'll help you plan the details</p>
+      <input className="input-field" type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} style={{ marginBottom: 16 }} />
+
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8, marginTop: 8 }}>LOCATION</div>
+      {locationDetected ? (
+        <div className="card fade-in" style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, borderColor: 'var(--success)', padding: '10px 14px' }}>
+          <div style={{ width: 28, height: 28, borderRadius: 6, background: 'var(--success-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--success)', fontSize: 12, fontWeight: 700 }}>✓</div>
+          <div>
+            <div style={{ color: 'var(--success)', fontSize: 11, fontWeight: 600 }}>DETECTED</div>
+            <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{location}</div>
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, color: 'var(--text-muted)' }}>
+          <div style={{ width: 16, height: 16, borderRadius: '50%', border: '2px solid var(--text-dim)', borderTopColor: 'var(--text-secondary)', animation: 'spin 0.8s linear infinite' }} />
+          <span style={{ fontSize: 13 }}>Detecting...</span>
+        </div>
+      )}
+      <input className="input-field" placeholder="Or enter city manually" value={location} onChange={e => setLocation(e.target.value)} style={{ marginBottom: 24 }} />
+      <button className="btn-primary" onClick={() => setStep(4)} style={{ marginBottom: 12 }}>Continue</button>
+      <button className="btn-secondary" onClick={() => setStep(4)}>Not sure yet</button>
+    </div>
+  );
+
+  const generalStep4 = (
+    <div key="g4" className="fade-in" style={{ padding: '40px 24px' }}>
+      <div onClick={() => setStep(3)} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 16, fontWeight: 500 }}>← Back</div>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, color: 'var(--text-primary)', marginBottom: 8, fontWeight: 700, letterSpacing: -0.5 }}>Invite the first one</h2>
+      <p style={{ color: 'var(--text-muted)', marginBottom: 24, fontSize: 14 }}>
+        {isGroom ? "Get one of the boys in — the rest will follow" : "Share access with the group organizer"}
+      </p>
+      <input className="input-field" type="email" placeholder="Their email address" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} style={{ marginBottom: 16 }} />
+      <button className="btn-primary" onClick={() => {
+        if (inviteEmail) alert(`Invite sent to ${inviteEmail}! (Prototype — no actual email sent)`);
+        finishOnboarding();
+      }} style={{ marginBottom: 12 }}>
+        {inviteEmail ? 'Send Invite & Continue' : 'Continue'}
+      </button>
+      <button className="btn-secondary" onClick={finishOnboarding}>Skip for now</button>
+    </div>
+  );
+
+  // Build steps array based on flow
+  const steps = isGroomsmanRole
+    ? [step0, step1, step2]
+    : isWedding
+      ? [step0, step1, step2, weddingStep3, weddingStep4, weddingStep5, weddingStep6]
+      : [step0, step1, step2, generalStep3, generalStep4];
+
+  return (
+    <div className="screen">
+      <StatusBar />
+      {/* Progress */}
+      <div style={{ padding: '0 24px', display: 'flex', gap: 4, flexShrink: 0 }}>
+        {steps.map((_, i) => (
+          <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= step ? 'var(--surface-dark)' : 'var(--border)', transition: '0.3s' }} />
+        ))}
+      </div>
+      <div className="screen-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+        {steps[step]}
+      </div>
+    </div>
+  );
+}
+
+// ── HOME SCREEN — UNIFIED DASHBOARD ──
+function HomeScreen({ user, onNav, isGroom, activeEvent, crewInvited, weddingStyle, groomsmenReqs = [], onEditStyle, cardIssued = false, pastEvents = [] }) {
+  const daysUntil = user.eventDate ? Math.max(0, Math.ceil((new Date(user.eventDate) - new Date()) / 86400000)) : null;
+  const hasEvent = !!activeEvent;
+  const isWedding = hasEvent ? activeEvent.eventType === 'wedding' : user.eventType === 'wedding';
+  const dressLabel = weddingStyle?.dressCode === 'black-tie' ? 'Black Tie' : weddingStyle?.dressCode === 'formal' ? 'Formal' : weddingStyle?.dressCode === 'semi-formal' ? 'Semi-Formal' : weddingStyle?.dressCode === 'smart-casual' ? 'Smart Casual' : weddingStyle?.dressCode === 'casual' ? 'Casual' : null;
+
+  // Build groomsmen mock data dynamically from selected requirements
+  const buildTasks = (completionProfile) => {
+    const tasks = {};
+    groomsmenReqs.forEach((key, i) => { tasks[key] = completionProfile[i] || false; });
+    return tasks;
+  };
+  const calcPct = (tasks) => {
+    const keys = Object.keys(tasks);
+    if (keys.length === 0) return 0;
+    return Math.round((keys.filter(k => tasks[k]).length / keys.length) * 100);
+  };
+  const groomsmenRaw = [
+    { name: "Jake Wilson", role: "Best Man", accepted: true, profile: [true, true, true, false, true, false, true, false] },
+    { name: "Ryan Chen", role: "Groomsman", accepted: true, profile: [true, false, true, false, false, true, false, false] },
+    { name: "Dan Murphy", role: "Groomsman", accepted: false, profile: [false, false, false, false, false, false, false, false] },
+    { name: "Tom Rodriguez", role: "Groomsman", accepted: true, profile: [true, true, true, true, true, true, true, true] },
+    { name: "Chris Lee", role: "Groomsman", accepted: false, profile: [false, false, false, false, false, false, false, false] },
+  ];
+  const groomsmen = groomsmenRaw.map(g => {
+    const tasks = buildTasks(g.profile);
+    return { ...g, tasks, pct: g.accepted ? calcPct(tasks) : -1 };
+  });
+
+  return (
+    <div className="screen-scroll" style={{ padding: '0 20px 20px' }}>
+
+      {/* ═══ HEADER — adapts to event type ═══ */}
+      <div className="fade-in" style={{ paddingTop: 16, marginBottom: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+          <div>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text-primary)', fontWeight: 700, letterSpacing: -0.5 }}>
+              {isWedding
+                ? (user.name && user.partnerName ? `${user.name} & ${user.partnerName}` : `${user.name || 'Mike'}'s Wedding`)
+                : (isGroom ? `What's good, ${user.name || 'Mike'}.` : `Hey, ${user.name || 'Sarah'}.`)}
+            </h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>
+              {isWedding
+                ? `${user.location || 'Location TBD'}${user.weddingVenue ? ` · ${user.weddingVenue}` : ''}`
+                : (hasEvent ? (daysUntil !== null ? `${daysUntil} days out` : "You're locked in") : "Let's get it set up")}
+            </p>
+          </div>
+          {daysUntil !== null && (
+            <div style={{ background: 'var(--surface-dark)', borderRadius: 'var(--radius-md)', padding: '8px 12px', textAlign: 'center' }}>
+              <div style={{ color: 'var(--accent)', fontSize: 20, fontWeight: 800, lineHeight: 1 }}>{daysUntil}</div>
+              <div style={{ color: '#78716C', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>DAYS</div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ═══ WEDDING-ONLY: Details Summary ═══ */}
+      {isWedding && (
+        <div className="card slide-up" style={{ marginBottom: 12, padding: 0, overflow: 'hidden' }}>
+          <div style={{ display: 'flex' }}>
+            <div style={{ flex: 1, padding: '12px 14px', borderRight: '1px solid var(--border)' }}>
+              <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>DATE</div>
+              <div style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 600, marginTop: 2 }}>{user.eventDate ? new Date(user.eventDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD'}</div>
+            </div>
+            <div style={{ flex: 1, padding: '12px 14px', borderRight: '1px solid var(--border)' }}>
+              <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>DRESS CODE</div>
+              <div style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 600, marginTop: 2 }}>{dressLabel || 'Not set'}</div>
+            </div>
+            <div style={{ flex: 1, padding: '12px 14px' }}>
+              <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>CREW</div>
+              <div style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 600, marginTop: 2 }}>{crewInvited ? '5 invited' : '0'}</div>
+            </div>
+          </div>
+          {weddingStyle?.colors?.length > 0 && (
+            <div onClick={onEditStyle} style={{ display: 'flex', borderTop: '1px solid var(--border)', cursor: 'pointer' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 14px', flex: 1 }}>
+                {weddingStyle.colors.map((hex, i) => <div key={i} style={{ width: 20, height: 20, borderRadius: 5, background: hex, border: hex === '#FFFFF0' ? '1px solid var(--border)' : 'none' }} />)}
+                {weddingStyle.attireNotes && <span style={{ color: 'var(--text-dim)', fontSize: 11, marginLeft: 4, fontStyle: 'italic' }}>"{weddingStyle.attireNotes.substring(0, 30)}{weddingStyle.attireNotes.length > 30 ? '...' : ''}"</span>}
+              </div>
+              <div style={{ padding: '10px 14px', color: 'var(--text-dim)', fontSize: 12 }}>Edit →</div>
+            </div>
+          )}
+          {!weddingStyle?.colors?.length && (
+            <div onClick={onEditStyle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border)', padding: '10px 14px', cursor: 'pointer' }}>
+              <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>Set wedding colors & style rules</span>
+              <span style={{ color: 'var(--text-dim)', fontSize: 12 }}>→</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ═══ WEDDING-ONLY: Requirements Summary ═══ */}
+      {isWedding && groomsmenReqs.length > 0 && (
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5 }}>REQUIREMENTS</div>
+            <div onClick={() => onNav('marketplace')} style={{ color: 'var(--accent)', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Discover →</div>
+          </div>
+          <div className="card" style={{ padding: '10px 14px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {groomsmenReqs.map(key => {
+                const labels = { tux: '🤵 Tux / Suit', shoes: '👞 Shoes', grooming: '💈 Grooming', rsvp: '✉️ RSVP', gift: '🎁 Gift', travel: '✈️ Travel', fitting: '📐 Fitting', accessories: '👔 Accessories' };
+                return (
+                  <span key={key} style={{ fontSize: 10, fontWeight: 600, padding: '4px 10px', borderRadius: 'var(--radius-full)', background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                    {labels[key] || key}
+                  </span>
+                );
+              })}
+            </div>
+            <div style={{ color: 'var(--text-dim)', fontSize: 11, marginTop: 8 }}>
+              Each groomsman must complete these. Browse vendors in Discover.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ WEDDING-ONLY: Groomsmen Status ═══ */}
+      {isWedding && crewInvited && (
+        <>
+          {groomsmen.filter(g => g.accepted).length > 0 && (
+            <>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, marginBottom: 10 }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5 }}>ACCEPTED</div>
+                <div style={{ fontSize: 11, color: 'var(--success)', fontWeight: 600 }}>{groomsmen.filter(g => g.accepted).length} of {groomsmen.length}</div>
+              </div>
+              {groomsmen.filter(g => g.accepted).map((g, i) => (
+                <div key={i} className="card" style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px' }}>
+                  <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--bg-secondary)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)', fontWeight: 700, fontSize: 13, flexShrink: 0,
+                                border: `2px solid ${g.pct === 100 ? 'var(--success)' : g.pct >= 50 ? 'var(--accent)' : 'var(--border)'}` }}>
+                    {g.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 13 }}>{g.name}</span>
+                        <span style={{ color: 'var(--text-dim)', fontSize: 11, marginLeft: 6 }}>{g.role}</span>
+                      </div>
+                      <span style={{ color: g.pct === 100 ? 'var(--success)' : g.pct >= 50 ? 'var(--text-primary)' : 'var(--text-muted)', fontSize: 13, fontWeight: 700 }}>{g.pct}%</span>
+                    </div>
+                    <div style={{ height: 4, borderRadius: 2, background: 'var(--bg-secondary)', marginTop: 6 }}>
+                      <div style={{ width: `${g.pct}%`, height: '100%', borderRadius: 2, background: g.pct === 100 ? 'var(--success)' : g.pct >= 50 ? 'var(--accent)' : 'var(--border-light)', transition: '0.3s' }} />
+                    </div>
+                    <div style={{ display: 'flex', gap: 4, marginTop: 6, flexWrap: 'wrap' }}>
+                      {Object.entries(g.tasks).map(([task, done]) => (
+                        <span key={task} style={{ fontSize: 9, fontWeight: 600, padding: '2px 6px', borderRadius: 'var(--radius-full)',
+                                                   background: done ? 'var(--success-bg)' : 'var(--bg-secondary)',
+                                                   color: done ? 'var(--success)' : 'var(--text-dim)', textTransform: 'capitalize' }}>{task}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+          {groomsmen.filter(g => !g.accepted).length > 0 && (
+            <>
+              <div style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8, marginTop: 14 }}>PENDING</div>
+              {groomsmen.filter(g => !g.accepted).map((g, i) => (
+                <div key={i} className="card" style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', opacity: 0.7 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--bg-secondary)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)', fontWeight: 700, fontSize: 13, flexShrink: 0,
+                                border: '2px dashed var(--border)' }}>
+                    {g.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <span style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: 13 }}>{g.name}</span>
+                    <span style={{ color: 'var(--text-dim)', fontSize: 11, marginLeft: 6 }}>{g.role}</span>
+                    <div style={{ color: 'var(--text-dim)', fontSize: 11, marginTop: 2 }}>Invite sent — waiting to accept</div>
+                  </div>
+                  <span style={{ fontSize: 9, fontWeight: 600, padding: '3px 8px', borderRadius: 'var(--radius-full)', background: 'var(--bg-secondary)', color: 'var(--text-dim)' }}>PENDING</span>
+                </div>
+              ))}
+            </>
+          )}
+          <div style={{ display: 'flex', gap: 8, marginTop: 8, marginBottom: 12 }}>
+            <div onClick={() => onNav('crew')} style={{ flex: 1, color: 'var(--text-muted)', fontSize: 12, fontWeight: 500, cursor: 'pointer', textAlign: 'center', padding: '10px 0', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+              + Invite more
+            </div>
+            <div onClick={() => onNav('crew')} style={{ flex: 1, color: 'var(--text-muted)', fontSize: 12, fontWeight: 500, cursor: 'pointer', textAlign: 'center', padding: '10px 0', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+              Manage crew →
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ═══ WEDDING-ONLY: Invite CTA (if no crew yet) ═══ */}
+      {isWedding && !crewInvited && (
+        <div style={{ marginTop: 8, marginBottom: 16 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10 }}>THE BOYS</div>
+          <div className="card slide-up" onClick={() => onNav('crew')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 18, flexShrink: 0 }}>+</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>Invite groomsmen</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>They'll get their checklist, Discover access, and their own dashboard</div>
+            </div>
+            <span style={{ color: 'var(--text-dim)', fontSize: 16 }}>→</span>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ UNIVERSAL: Active Events ═══ */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10, marginTop: 4 }}>
+        {pastEvents.length > 0 ? 'ACTIVE EVENTS' : 'EVENTS'}
+      </div>
+      {hasEvent && (
+        <>
+          <div className="card" onClick={() => onNav('eventDetail')} style={{ marginBottom: 8, cursor: 'pointer' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{activeEvent.name}</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>{activeEvent.duration} · {activeEvent.budget}</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ background: 'var(--accent)', color: 'var(--surface-dark)', fontSize: 9, fontWeight: 700, padding: '3px 8px', borderRadius: 'var(--radius-full)' }}>PLANNING</div>
+                <span style={{ color: 'var(--text-dim)', fontSize: 14 }}>→</span>
+              </div>
+            </div>
+          </div>
+          {/* Next action prompt */}
+          <div onClick={() => onNav('eventDetail')} className="fade-in" style={{ marginBottom: 8, padding: '10px 14px', borderRadius: 'var(--radius-md)', background: 'var(--accent-bg)', border: '1px solid rgba(196,244,56,0.2)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 7, background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, flexShrink: 0 }}>→</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ color: 'var(--text-primary)', fontSize: 12, fontWeight: 600 }}>
+                {activeEvent.splitCosts
+                  ? (cardIssued ? 'Crew is funded — review spending breakdown' : 'Send payment requests to the crew')
+                  : 'Set up cost splitting to collect contributions'}
+              </div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>Tap to manage this event</div>
+            </div>
+          </div>
+        </>
+      )}
+      <div className="card" onClick={() => onNav('events')} style={{ marginBottom: 12, cursor: 'pointer', borderStyle: 'dashed', display: 'flex', alignItems: 'center', gap: 12, padding: '14px' }}>
+        <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 16 }}>+</div>
+        <div style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 500 }}>
+          {isWedding ? (hasEvent ? 'Add another event' : 'Plan the bachelor party, rehearsal dinner...') : (hasEvent ? 'Add another event' : 'Create your first event')}
+        </div>
+      </div>
+
+      {/* ═══ UNIVERSAL: Past Events ═══ */}
+      {pastEvents.length > 0 && (
+        <>
+          <div style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8, marginTop: 4 }}>PAST EVENTS</div>
+          {pastEvents.map((pe, i) => (
+            <div key={i} className="card" style={{ marginBottom: 6, opacity: 0.6 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: 14 }}>{pe.name}</div>
+                  <div style={{ color: 'var(--text-dim)', fontSize: 12 }}>{pe.duration}</div>
+                </div>
+                <span style={{ fontSize: 9, fontWeight: 600, padding: '3px 8px', borderRadius: 'var(--radius-full)', background: 'var(--bg-secondary)', color: 'var(--text-dim)' }}>COMPLETED</span>
+              </div>
+            </div>
+          ))}
+        </>
+      )}
+
+      {/* ═══ UNIVERSAL: Card CTA ═══ */}
+      {cardIssued && (
+        <div className="card slide-up" onClick={() => onNav('card')} style={{ cursor: 'pointer', marginBottom: 16, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, background: 'var(--surface-dark)' }}>
+          <div style={{ width: 36, height: 28, borderRadius: 5, background: 'linear-gradient(135deg, #C4F438 0%, #9BBF2D 50%, #C4F438 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: 16, height: 12, borderRadius: 2, border: '1px solid rgba(0,0,0,0.15)' }} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ color: '#FAFAF9', fontWeight: 600, fontSize: 13 }}>Ventura Onyx</div>
+            <div style={{ color: '#78716C', fontSize: 11 }}>$886.00 available · 5 of 5 paid</div>
+          </div>
+          <span style={{ color: 'var(--accent)', fontSize: 16 }}>→</span>
+        </div>
+      )}
+
+      {/* ═══ UNIVERSAL: AI Concierge ═══ */}
+      <div className="card slide-up" onClick={() => onNav('chat')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16, background: 'var(--surface-dark)' }}>
+        <div style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', background: 'var(--surface-dark-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 7 }}><Logo size={20} /></div>
+        <div style={{ flex: 1 }}>
+          <div style={{ color: '#FAFAF9', fontWeight: 600, fontSize: 14 }}>Concierge</div>
+          <div style={{ color: '#78716C', fontSize: 11 }}>Plan, book, coordinate — ask anything.</div>
+        </div>
+        <span style={{ color: 'var(--accent)', fontSize: 16 }}>→</span>
+      </div>
+    </div>
+  );
+}
+
+// ── EVENTS SCREEN ──
+function EventsScreen({ onNav, onCreateEvent, activeEvent, isGroom, user, isBride = false }) {
+  const [view, setView] = useState(activeEvent ? 'list' : 'templates'); // start at templates if no event
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [customName, setCustomName] = useState('');
+  const [customLocation, setCustomLocation] = useState('');
+  const [customBudget, setCustomBudget] = useState('');
+  const [customEventType, setCustomEventType] = useState(user.eventType || 'general');
+  const [splitCosts, setSplitCosts] = useState(user.eventType === 'wedding');
+  const [showDestinations, setShowDestinations] = useState(false);
+  const [pollFavorites, setPollFavorites] = useState([]);
+  const [pollSent, setPollSent] = useState(false);
+  const toggleFavorite = (id) => {
+    setPollFavorites(prev => prev.includes(id) ? prev.filter(f => f !== id) : prev.length < 3 ? [...prev, id] : prev);
+    setPollSent(false);
+  };
+
+  if (view === 'detail' && selectedTemplate) {
+    const t = selectedTemplate;
+    const isIdea = !!t.gradient; // ideas have gradients, templates don't
+
+    if (isIdea) {
+      // ═══════════════════════════════════════════
+      // CINEMATIC IDEA DETAIL VIEW
+      // ═══════════════════════════════════════════
+      return (
+        <div className="screen-scroll" style={{ padding: 0, background: '#0A0A0A' }}>
+          {/* Hero section with photo */}
+          <div style={{ position: 'relative', minHeight: 260, overflow: 'hidden' }}>
+            {/* Photo background with gradient overlay */}
+            {t.photo ? (
+              <>
+                <img src={t.photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 50%, #0A0A0A 100%)' }} />
+              </>
+            ) : (
+              <div style={{ position: 'absolute', inset: 0, background: t.gradient }} />
+            )}
+            {/* Texture overlay */}
+            <div style={{ position: 'absolute', inset: 0, opacity: 0.05,
+              background: 'radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.4) 0%, transparent 50%)',
+            }} />
+            {/* Back button */}
+            <div onClick={() => setView('templates')} style={{ position: 'absolute', top: 14, left: 16, zIndex: 2, display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(10px)', padding: '6px 14px', borderRadius: 20, cursor: 'pointer', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13, fontWeight: 500 }}>← Back</span>
+            </div>
+            {/* Vetted badge */}
+            <div style={{ position: 'absolute', top: 14, right: 16, display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)', padding: '5px 12px', borderRadius: 20, border: '1px solid rgba(255,255,255,0.06)' }}>
+              <span style={{ fontSize: 10, color: t.accentHue }}>✦</span>
+              <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, fontWeight: 600, letterSpacing: 0.5 }}>VETTED</span>
+            </div>
+            {/* Title content */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '40px 22px 22px', background: 'linear-gradient(to top, #0A0A0A 10%, transparent 100%)' }}>
+              <div style={{ color: t.accentHue, fontSize: 9, fontWeight: 600, letterSpacing: 4, marginBottom: 6, opacity: 0.8 }}>{t.subtitle}</div>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 30, color: '#FAFAF9', fontWeight: 800, letterSpacing: -0.5, lineHeight: 1.05, marginBottom: 6 }}>{t.title || t.name}</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 5, height: 5, borderRadius: '50%', background: t.accentHue }} />
+                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: 500 }}>{t.location || t.budget}</span>
+                <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>
+                <span style={{ color: '#FAFAF9', fontSize: 14, fontWeight: 700 }}>{t.perPerson || t.budget}<span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>/person</span></span>
+              </div>
+            </div>
+          </div>
+
+          {/* Content on dark background */}
+          <div style={{ padding: '20px 20px 24px', background: '#0A0A0A' }}>
+            {/* Description */}
+            {t.desc && (
+              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, lineHeight: 1.6, marginBottom: 20 }}>{t.desc}</p>
+            )}
+
+            {/* Activities */}
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontWeight: 600, letterSpacing: 2, marginBottom: 12 }}>THE ITINERARY</div>
+            {t.activities.map((a, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 0', borderBottom: i < t.activities.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: t.accentHue || 'var(--accent)', fontWeight: 700, fontSize: 12, flexShrink: 0 }}>{i+1}</div>
+                <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 14, fontWeight: 500 }}>{a}</span>
+              </div>
+            ))}
+
+            {/* Duration + pricing card */}
+            <div style={{ marginTop: 20, borderRadius: 14, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', padding: '16px 18px', display: 'flex', justifyContent: 'space-around' }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 9, fontWeight: 600, letterSpacing: 1 }}>DURATION</div>
+                <div style={{ color: '#FAFAF9', fontSize: 15, fontWeight: 700, marginTop: 4 }}>{t.duration}</div>
+              </div>
+              <div style={{ width: 1, background: 'rgba(255,255,255,0.08)' }} />
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 9, fontWeight: 600, letterSpacing: 1 }}>PER PERSON</div>
+                <div style={{ color: '#FAFAF9', fontSize: 15, fontWeight: 700, marginTop: 4 }}>{t.perPerson || t.budget}</div>
+              </div>
+              <div style={{ width: 1, background: 'rgba(255,255,255,0.08)' }} />
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 9, fontWeight: 600, letterSpacing: 1 }}>CREW</div>
+                <div style={{ color: '#FAFAF9', fontSize: 15, fontWeight: 700, marginTop: 4 }}>5 guys</div>
+              </div>
+            </div>
+
+            {/* Cost Split Toggle */}
+            <div style={{ marginTop: 20, borderRadius: 14, overflow: 'hidden', border: splitCosts ? '1px solid rgba(196,244,56,0.3)' : '1px solid rgba(255,255,255,0.08)', background: splitCosts ? 'rgba(196,244,56,0.05)' : 'rgba(255,255,255,0.02)', padding: '14px 18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              onClick={() => setSplitCosts(!splitCosts)}>
+              <div>
+                <div style={{ color: '#FAFAF9', fontWeight: 600, fontSize: 14 }}>Split costs with the crew</div>
+                <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, marginTop: 2 }}>{splitCosts ? 'Ventura Onyx activated' : 'Activate the Ventura Onyx'}</div>
+              </div>
+              <div style={{ width: 44, height: 24, borderRadius: 12, background: splitCosts ? 'var(--accent)' : 'rgba(255,255,255,0.1)', padding: 2, transition: '0.2s', flexShrink: 0 }}>
+                <div style={{ width: 20, height: 20, borderRadius: 10, background: splitCosts ? 'var(--surface-dark)' : 'rgba(255,255,255,0.25)', transition: '0.2s', transform: splitCosts ? 'translateX(20px)' : 'translateX(0)' }} />
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <button className="btn-accent" style={{ marginTop: 24, width: '100%' }} onClick={() => onCreateEvent({ name: t.title || t.name, duration: t.duration, budget: t.perPerson || t.budget, location: t.location || user.location, activities: t.activities, eventType: 'wedding', splitCosts })}>
+              Select This Event
+            </button>
+            <button onClick={() => setView('custom')} style={{ width: '100%', marginTop: 10, padding: '14px', borderRadius: 'var(--radius-md)', background: 'none', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>
+              Customize Instead
+            </button>
+            <div style={{ height: 20 }} />
+          </div>
+        </div>
+      );
+    }
+
+    // ═══════════════════════════════════════════
+    // NON-WEDDING: Standard template detail
+    // ═══════════════════════════════════════════
+    return (
+      <div className="screen-scroll" style={{ padding: '0 20px 20px' }}>
+        <div style={{ paddingTop: 16, marginBottom: 20 }}>
+          <div onClick={() => setView('templates')} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 12, fontWeight: 500 }}>← Back</div>
+          <div style={{ width: 52, height: 52, borderRadius: 12, background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 800, color: 'var(--surface-dark)', marginBottom: 8 }}>{t.icon}</div>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.3 }}>{t.name}</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ color: 'var(--accent)', fontSize: 13 }}>{t.duration} · {t.budget}</span>
+          </div>
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 12 }}>INCLUDED ACTIVITIES</div>
+        {t.activities.map((a, i) => (
+          <div key={i} className="card" style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 'var(--radius-sm)', background: 'var(--surface-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)', fontWeight: 700, fontSize: 12 }}>{i+1}</div>
+            <span style={{ color: 'var(--text-primary)', fontSize: 15 }}>{a}</span>
+          </div>
+        ))}
+
+        {/* Cost Split Toggle */}
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 12, marginTop: 20 }}>COST SPLITTING</div>
+        <div className="card" onClick={() => setSplitCosts(!splitCosts)}
+          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px',
+                   border: splitCosts ? '2px solid var(--surface-dark)' : '1px solid var(--border)',
+                   background: splitCosts ? 'var(--accent-bg)' : 'var(--bg-card)' }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>Split costs with the crew</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 2 }}>{splitCosts ? 'Ventura Onyx activated — the boys chip in, you spend.' : 'Enable to activate the Ventura Onyx for this event'}</div>
+          </div>
+          <div style={{ width: 44, height: 24, borderRadius: 12, background: splitCosts ? 'var(--surface-dark)' : 'var(--bg-secondary)', padding: 2, cursor: 'pointer', transition: '0.2s', flexShrink: 0 }}>
+            <div style={{ width: 20, height: 20, borderRadius: 10, background: splitCosts ? 'var(--accent)' : 'var(--text-dim)', transition: '0.2s', transform: splitCosts ? 'translateX(20px)' : 'translateX(0)' }} />
+          </div>
+        </div>
+
+        <button className="btn-primary" style={{ marginTop: 20 }} onClick={() => onCreateEvent({ name: t.name, duration: t.duration, budget: t.budget, location: user.location, activities: t.activities, eventType: t.eventType, splitCosts })}>Select This Event</button>
+        <button className="btn-secondary" style={{ marginTop: 8 }} onClick={() => setView('custom')}>Customize Instead</button>
+      </div>
+    );
+  }
+
+  if (view === 'custom') {
+    return (
+      <div className="screen-scroll" style={{ padding: '0 20px 20px' }}>
+        <div style={{ paddingTop: 16, marginBottom: 20 }}>
+          <div onClick={() => setView(activeEvent ? 'list' : 'templates')} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 12, fontWeight: 500 }}>← Back</div>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.3 }}>{isGroom ? 'Build your own' : 'Custom Event'}</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>{isGroom ? "Your event, your rules" : "Build it your way"}</p>
+        </div>
+        {/* Event Type Selector */}
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8 }}>EVENT TYPE</div>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+          {[
+            { val: 'wedding', label: 'Wedding' },
+            { val: 'guys-trip', label: 'Guys Trip' },
+            { val: 'birthday', label: 'Birthday' },
+            { val: 'general', label: 'General' },
+          ].map(t => (
+            <div key={t.val} onClick={() => setCustomEventType(t.val)}
+              style={{ padding: '8px 16px', borderRadius: 'var(--radius-full)', fontSize: 13, fontWeight: 500, cursor: 'pointer',
+                       background: customEventType === t.val ? 'var(--surface-dark)' : 'var(--bg-card)',
+                       color: customEventType === t.val ? '#fff' : 'var(--text-secondary)',
+                       border: `1px solid ${customEventType === t.val ? 'var(--surface-dark)' : 'var(--border)'}` }}>
+              {t.label}
+            </div>
+          ))}
+        </div>
+
+        <input className="input-field" placeholder={isGroom ? "What are we calling this?" : "Event name"} value={customName} onChange={e => setCustomName(e.target.value)} style={{ marginBottom: 12 }} />
+        <input className="input-field" type="date" placeholder="Start date" style={{ marginBottom: 12 }} />
+        <input className="input-field" type="date" placeholder="End date" style={{ marginBottom: 12 }} />
+        <input className="input-field" placeholder="Location" value={customLocation} onChange={e => setCustomLocation(e.target.value)} defaultValue={user.location} style={{ marginBottom: 12 }} />
+        <input className="input-field" placeholder="Budget per person" value={customBudget} onChange={e => setCustomBudget(e.target.value)} style={{ marginBottom: 12 }} />
+        <textarea className="input-field" placeholder="What's the vibe? (casual, upscale, adventure...)" rows={3} style={{ marginBottom: 20, resize: 'none' }} />
+
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 12 }}>ADD ACTIVITIES</div>
+        {['Bourbon Trail', 'Golf', 'Dinner', 'Bar Crawl', 'Spa Day', 'Shooting Range', 'Boat Trip', 'Cooking Class'].map((a, i) => (
+          <div key={i} className="card" style={{ marginBottom: 6, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', cursor: 'pointer' }}
+               onClick={(e) => { e.target.closest('.card').style.borderColor = 'var(--accent)'; }}>
+            <span style={{ color: 'var(--text-primary)', fontSize: 14 }}>{a}</span>
+            <span style={{ color: 'var(--accent)', fontSize: 18 }}>+</span>
+          </div>
+        ))}
+
+        {/* Cost Split Toggle */}
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 12, marginTop: 20 }}>COST SPLITTING</div>
+        <div className="card" onClick={() => setSplitCosts(!splitCosts)}
+          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px',
+                   border: splitCosts ? '2px solid var(--surface-dark)' : '1px solid var(--border)',
+                   background: splitCosts ? 'var(--accent-bg)' : 'var(--bg-card)' }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>Split costs with the crew</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 2 }}>{splitCosts ? 'Ventura Onyx activated — the boys chip in, you spend.' : 'Enable to activate the Ventura Onyx for this event'}</div>
+          </div>
+          <div style={{ width: 44, height: 24, borderRadius: 12, background: splitCosts ? 'var(--surface-dark)' : 'var(--bg-secondary)', padding: 2, cursor: 'pointer', transition: '0.2s', flexShrink: 0 }}>
+            <div style={{ width: 20, height: 20, borderRadius: 10, background: splitCosts ? 'var(--accent)' : 'var(--text-dim)', transition: '0.2s', transform: splitCosts ? 'translateX(20px)' : 'translateX(0)' }} />
+          </div>
+        </div>
+
+        <button className="btn-primary" style={{ marginTop: 20 }} onClick={() => onCreateEvent({ name: customName || 'Custom Event', duration: 'Custom', budget: customBudget || 'TBD', location: customLocation || user.location, eventType: customEventType, splitCosts })}>Create Event</button>
+      </div>
+    );
+  }
+
+  if (view === 'templates') {
+    // ═══════════════════════════════════════════
+    // BRIDE VIEW: Wedding coordination events only
+    // ═══════════════════════════════════════════
+    if (isBride && user.eventType === 'wedding') {
+      const BRIDE_EVENTS = [
+        { id: 'rehearsal', title: 'Rehearsal Dinner', desc: 'Coordinate the rehearsal dinner — venue, menu, toasts, and timing.', icon: '🍽️', status: 'Plan Now' },
+        { id: 'welcome', title: 'Welcome Party', desc: 'Casual evening for out-of-town guests the night before.', icon: '🥂', status: 'Plan Now' },
+        { id: 'brunch', title: 'Morning-After Brunch', desc: 'A relaxed send-off brunch for the wedding party and close family.', icon: '☕', status: 'Plan Now' },
+        { id: 'gifts', title: 'Gift Coordination', desc: 'Track groomsmen gifts, thank-you notes, and wedding party favors.', icon: '🎁', status: 'Manage' },
+        { id: 'timeline', title: 'Day-Of Timeline', desc: 'Build the wedding day timeline — ceremony, photos, reception, exits.', icon: '⏱️', status: 'Build' },
+        { id: 'vendors', title: 'Vendor Contacts', desc: 'Keep all vendor details in one place — florist, DJ, caterer, photographer.', icon: '📋', status: 'Manage' },
+      ];
+      return (
+        <div className="screen-scroll" style={{ padding: '0 20px 20px' }}>
+          <div style={{ paddingTop: 16, marginBottom: 20 }}>
+            {activeEvent && <div onClick={() => setView('list')} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 12, fontWeight: 500 }}>← Back</div>}
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.3 }}>Wedding Planning</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>Coordinate the events around the big day</p>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {BRIDE_EVENTS.map((evt, i) => (
+              <div key={evt.id} className="card slide-up" style={{ display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer', animationDelay: `${i * 0.05}s` }}
+                onClick={() => {
+                  setCustomName(evt.title);
+                  setCustomEventType('wedding');
+                  setView('custom');
+                }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>{evt.icon}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 15 }}>{evt.title}</div>
+                  <div style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 2 }}>{evt.desc}</div>
+                </div>
+                <div style={{ background: 'var(--accent)', color: 'var(--surface-dark)', fontSize: 10, fontWeight: 700, padding: '5px 10px', borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap', flexShrink: 0 }}>{evt.status}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 16 }}>
+            <div onClick={() => setView('custom')} className="card" style={{ cursor: 'pointer', textAlign: 'center', border: '1px dashed var(--border)', padding: '20px 16px' }}>
+              <div style={{ color: 'var(--text-muted)', fontSize: 22, marginBottom: 6 }}>✦</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>Add Custom Event</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>Plan something specific for the wedding weekend</div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ═══════════════════════════════════════════
+    // GROOM: Cinematic bachelor party "Ideas" section
+    // ═══════════════════════════════════════════
+    if (user.eventType === 'wedding') {
+      const BACHELOR_IDEAS = [
+        {
+          id: 'nash-bourbon',
+          title: 'Bourbon & Brotherhood',
+          location: 'Nashville, TN',
+          subtitle: 'N A S H V I L L E',
+          duration: '3 days · 2 nights',
+          perPerson: '$320-$450',
+          desc: 'Bourbon trail, live music on Broadway, steakhouse dinner, and a rooftop send-off overlooking the skyline.',
+          activities: ['Bourbon Distillery Tour', 'Broadway Bar Crawl', 'Private Steakhouse', 'Rooftop Finale'],
+          gradient: 'linear-gradient(160deg, #2C1810 0%, #4A3728 30%, #1C1917 70%, #0A0A0A 100%)',
+          accentHue: '#D4A574',
+          photo: 'https://images.unsplash.com/photo-1508693926297-1d61ee3df82a?w=800&q=80',
+        },
+        {
+          id: 'scottsdale-desert',
+          title: 'Desert Kings',
+          location: 'Scottsdale, AZ',
+          subtitle: 'S C O T T S D A L E',
+          duration: '3 days · 2 nights',
+          perPerson: '$400-$600',
+          desc: 'Desert golf at sunrise, pool day at a luxury resort, off-road ATV adventure, and a cigar lounge under the stars.',
+          activities: ['Championship Golf', 'Resort Pool Day', 'ATV Desert Tour', 'Cigar & Whiskey Night'],
+          gradient: 'linear-gradient(160deg, #8B6914 0%, #6B4E0A 25%, #3D2E0A 60%, #0A0A0A 100%)',
+          accentHue: '#E8C547',
+          photo: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&q=80',
+        },
+        {
+          id: 'miami-heat',
+          title: 'South Beach Send-Off',
+          location: 'Miami, FL',
+          subtitle: 'M I A M I',
+          duration: '3 days · 2 nights',
+          perPerson: '$500-$800',
+          desc: 'Deep-sea fishing at dawn, beachfront brunch, VIP nightlife, and a yacht sunset cruise through Biscayne Bay.',
+          activities: ['Deep-Sea Fishing', 'Beachfront Brunch', 'Yacht Sunset Cruise', 'VIP Nightlife'],
+          gradient: 'linear-gradient(160deg, #0A3D5C 0%, #1A5276 25%, #0E2F44 60%, #0A0A0A 100%)',
+          accentHue: '#5DADE2',
+          photo: 'https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?w=800&q=80',
+        },
+        {
+          id: 'aspen-alpine',
+          title: 'Alpine Brotherhood',
+          location: 'Aspen, CO',
+          subtitle: 'A S P E N',
+          duration: '4 days · 3 nights',
+          perPerson: '$600-$900',
+          desc: 'Ski runs or summer hikes, private cabin with chef, whiskey tasting, and an outdoor fire pit under the Rockies.',
+          activities: ['Ski / Hike Day', 'Private Chef Dinner', 'Whiskey Tasting', 'Bonfire Under Stars'],
+          gradient: 'linear-gradient(160deg, #4A6B7A 0%, #2C4A5A 30%, #1A2F3A 60%, #0A0A0A 100%)',
+          accentHue: '#A8C8D8',
+          photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+        },
+        {
+          id: 'vegas-night',
+          title: 'The Vegas Play',
+          location: 'Las Vegas, NV',
+          subtitle: 'L A S   V E G A S',
+          duration: '2 days · 2 nights',
+          perPerson: '$400-$700',
+          desc: 'Pool party, world-class dining, VIP table service, and a helicopter tour over the Strip at sunset.',
+          activities: ['Pool Party', 'World-Class Dining', 'Helicopter Tour', 'VIP Table Service'],
+          gradient: 'linear-gradient(160deg, #3D0A3D 0%, #5C1A5C 25%, #2E0E2E 60%, #0A0A0A 100%)',
+          accentHue: '#D4A5D4',
+          photo: 'https://images.unsplash.com/photo-1605833556294-ea5c7a74f57d?w=800&q=80',
+        },
+        {
+          id: 'cabo-coast',
+          title: 'Cabo Cartel',
+          location: 'Cabo San Lucas, MX',
+          subtitle: 'C A B O',
+          duration: '4 days · 3 nights',
+          perPerson: '$500-$750',
+          desc: 'Beachfront villa, sportfishing, taco crawl through town, and a sunset catamaran with open bar.',
+          activities: ['Beachfront Villa', 'Sportfishing Charter', 'Taco Crawl', 'Catamaran Sunset'],
+          gradient: 'linear-gradient(160deg, #0A4A3D 0%, #1A6B5C 25%, #0E3D33 60%, #0A0A0A 100%)',
+          accentHue: '#5DE8C5',
+          photo: 'https://images.unsplash.com/photo-1510097467424-192d713fd8b2?w=800&q=80',
+        },
+        {
+          id: 'austin-vibe',
+          title: 'Keep It Weird',
+          location: 'Austin, TX',
+          subtitle: 'A U S T I N',
+          duration: '3 days · 2 nights',
+          perPerson: '$280-$420',
+          desc: 'Live music on 6th Street, brisket crawl, tubing the Guadalupe, and a speakeasy whiskey flight.',
+          activities: ['6th Street Live Music', 'BBQ Brisket Crawl', 'River Tubing', 'Speakeasy Night'],
+          gradient: 'linear-gradient(160deg, #4A2C0A 0%, #6B3D14 25%, #3D1E0A 60%, #0A0A0A 100%)',
+          accentHue: '#E8A54D',
+          photo: 'https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=800&q=80',
+        },
+        {
+          id: 'charleston-classic',
+          title: 'The Gentleman\'s Weekend',
+          location: 'Charleston, SC',
+          subtitle: 'C H A R L E S T O N',
+          duration: '3 days · 2 nights',
+          perPerson: '$350-$500',
+          desc: 'Private oyster roast, golf at Kiawah Island, ghost tour through the Holy City, and a lowcountry boil.',
+          activities: ['Oyster Roast', 'Kiawah Island Golf', 'Historic Ghost Tour', 'Lowcountry Boil'],
+          gradient: 'linear-gradient(160deg, #2C3D2C 0%, #3D5C3D 25%, #1E2E1E 60%, #0A0A0A 100%)',
+          accentHue: '#8BC48B',
+          photo: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&q=80',
+        },
+      ];
+
+      // ═══════════════════════════════════════════
+      // PARTNERSHIP LANDING SCREEN
+      // ═══════════════════════════════════════════
+      if (!showDestinations) {
+        return (
+          <div className="screen-scroll" style={{ padding: 0, background: '#0A0A0A' }}>
+            {activeEvent && <div onClick={() => setView('list')} style={{ position: 'absolute', top: 14, left: 16, zIndex: 10, display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', padding: '6px 14px', borderRadius: 20, cursor: 'pointer', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13, fontWeight: 500 }}>← Back</span>
+            </div>}
+            {/* Hero image — aspirational lifestyle */}
+            <div style={{ position: 'relative', height: 340, overflow: 'hidden' }}>
+              <img src="https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&q=80" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(10,10,10,0.1) 0%, rgba(10,10,10,0.4) 50%, #0A0A0A 100%)' }} />
+              {/* Vetted badge */}
+              <div style={{ position: 'absolute', top: 16, right: 16, display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(196,244,56,0.12)', backdropFilter: 'blur(12px)', padding: '6px 14px', borderRadius: 20, border: '1px solid rgba(196,244,56,0.2)' }}>
+                <span style={{ color: '#C4F438', fontSize: 10, fontWeight: 700, letterSpacing: 1 }}>✦ VETTED PARTNERS</span>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div style={{ padding: '0 24px 32px', marginTop: -40, position: 'relative', zIndex: 1 }}>
+              <div style={{ color: '#C4F438', fontSize: 9, fontWeight: 700, letterSpacing: 5, marginBottom: 12 }}>GROOMS × LOCAL PARTNERS</div>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 30, color: '#FAFAF9', fontWeight: 800, letterSpacing: -0.5, lineHeight: 1.1, marginBottom: 16 }}>
+                Vetted. Arranged.<br/>Handled.
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, lineHeight: 1.7, marginBottom: 28 }}>
+                Every destination on Grooms is built and managed by a vetted local partner. They handle the reservations, the logistics, the backup plan. You show up.
+              </p>
+
+              {/* Trust signals */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 32 }}>
+                {[
+                  { icon: '◈', label: 'Professionally arranged', desc: 'Local event companies design every itinerary' },
+                  { icon: '◉', label: 'Bespoke for your crew', desc: 'Customized to your group size, budget, and vibe' },
+                  { icon: '◎', label: 'One price, everything included', desc: 'No hidden fees — venues, activities, reservations handled' },
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(196,244,56,0.08)', border: '1px solid rgba(196,244,56,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#C4F438', fontSize: 16, flexShrink: 0 }}>{item.icon}</div>
+                    <div>
+                      <div style={{ color: '#FAFAF9', fontWeight: 600, fontSize: 14 }}>{item.label}</div>
+                      <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>{item.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button className="btn-accent" style={{ width: '100%', fontSize: 16, padding: '16px 24px' }} onClick={() => setShowDestinations(true)}>
+                Browse Destinations
+              </button>
+              <button onClick={() => setView('custom')} style={{ width: '100%', marginTop: 10, padding: '14px', borderRadius: 'var(--radius-full)', background: 'none', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+                Plan Your Own Instead
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      // ═══════════════════════════════════════════
+      // DESTINATION LISTINGS — Photo cards + Poll
+      // ═══════════════════════════════════════════
+      return (
+        <div className="screen-scroll" style={{ padding: 0 }}>
+          <div style={{ padding: '16px 20px 12px' }}>
+            <div onClick={() => setShowDestinations(false)} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 12, fontWeight: 500 }}>← Back</div>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.5 }}>Destinations</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>
+              {pollFavorites.length > 0
+                ? `${pollFavorites.length} selected — send a poll to the crew or pick one directly`
+                : 'Tap the heart to shortlist, then poll the crew or pick one directly'}
+            </p>
+          </div>
+
+          {/* Poll bar — shows when favorites exist */}
+          {pollFavorites.length > 0 && (
+            <div className="fade-in" style={{ margin: '0 12px 12px', padding: '12px 16px', borderRadius: 14, background: 'var(--surface-dark)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ color: '#FAFAF9', fontSize: 13, fontWeight: 600 }}>{pollFavorites.length} destination{pollFavorites.length !== 1 ? 's' : ''} shortlisted</div>
+                <div style={{ color: '#78716C', fontSize: 11, marginTop: 2 }}>
+                  {pollSent ? '✓ Poll sent — votes coming in' : 'Send a poll to let the crew vote'}
+                </div>
+              </div>
+              {!pollSent ? (
+                <div onClick={() => setPollSent(true)} style={{ background: 'var(--accent)', color: 'var(--surface-dark)', fontWeight: 700, fontSize: 12, padding: '8px 16px', borderRadius: 20, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  Send Poll
+                </div>
+              ) : (
+                <div style={{ background: 'rgba(196,244,56,0.15)', color: '#C4F438', fontWeight: 700, fontSize: 11, padding: '6px 12px', borderRadius: 20 }}>
+                  LIVE
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Poll results — shows after poll is sent */}
+          {pollSent && pollFavorites.length > 0 && (
+            <div className="fade-in" style={{ margin: '0 12px 14px', padding: '14px 16px', borderRadius: 14, background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10 }}>CREW VOTES · 4 of 5 responded</div>
+              {pollFavorites.map((favId, idx) => {
+                const idea = BACHELOR_IDEAS.find(i => i.id === favId);
+                if (!idea) return null;
+                const votes = [3, 1, 1][idx] || 0;
+                const pct = Math.round((votes / 4) * 100);
+                const isWinner = idx === 0;
+                return (
+                  <div key={favId} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                    <div style={{ width: 36, height: 24, borderRadius: 6, overflow: 'hidden', flexShrink: 0 }}>
+                      <img src={idea.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
+                        <span style={{ color: 'var(--text-primary)', fontSize: 12, fontWeight: 600 }}>{idea.title}</span>
+                        <span style={{ color: isWinner ? 'var(--success)' : 'var(--text-dim)', fontSize: 11, fontWeight: 700 }}>{votes} vote{votes !== 1 ? 's' : ''}</span>
+                      </div>
+                      <div style={{ height: 4, borderRadius: 2, background: 'var(--bg-secondary)' }}>
+                        <div style={{ width: `${pct}%`, height: '100%', borderRadius: 2, background: isWinner ? 'var(--accent)' : 'var(--border-light)', transition: '0.4s' }} />
+                      </div>
+                    </div>
+                    {isWinner && <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 10, background: 'var(--success-bg)', color: 'var(--success)' }}>LEAD</span>}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Destination cards — photo-based */}
+          <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {BACHELOR_IDEAS.map((idea, idx) => {
+              const isFav = pollFavorites.includes(idea.id);
+              return (
+                <div key={idea.id} className="slide-up"
+                  style={{
+                    borderRadius: 20, overflow: 'hidden',
+                    background: '#0A0A0A',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+                    animationDelay: `${idx * 0.06}s`,
+                    border: isFav ? '2px solid var(--accent)' : '1px solid rgba(255,255,255,0.06)',
+                  }}>
+                  {/* Photo hero — top third */}
+                  <div onClick={() => { setSelectedTemplate({ ...idea, name: idea.title, budget: idea.perPerson, icon: idea.location.slice(0,2).toUpperCase(), eventType: 'wedding' }); setView('detail'); }}
+                    style={{ position: 'relative', height: 160, cursor: 'pointer', overflow: 'hidden' }}>
+                    <img src={idea.photo} alt={idea.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 70%, #0A0A0A 100%)' }} />
+                    {/* Location pill */}
+                    <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', padding: '4px 10px', borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)' }}>
+                      <div style={{ width: 4, height: 4, borderRadius: '50%', background: idea.accentHue }} />
+                      <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, fontWeight: 600, letterSpacing: 0.3 }}>{idea.location}</span>
+                    </div>
+                    {/* Favorite heart */}
+                    <div onClick={(e) => { e.stopPropagation(); toggleFavorite(idea.id); }}
+                      style={{ position: 'absolute', top: 12, left: 12, width: 32, height: 32, borderRadius: '50%', background: isFav ? 'var(--accent)' : 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: isFav ? 'none' : '1px solid rgba(255,255,255,0.1)', transition: '0.2s' }}>
+                      <span style={{ fontSize: 14, color: isFav ? 'var(--surface-dark)' : 'rgba(255,255,255,0.7)' }}>{isFav ? '♥' : '♡'}</span>
+                    </div>
+                    {/* Title overlay */}
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 18px 14px' }}>
+                      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 24, color: '#FAFAF9', fontWeight: 800, letterSpacing: -0.5, lineHeight: 1.1, marginBottom: 2, textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>{idea.title}</h3>
+                      <div style={{ color: idea.accentHue, fontSize: 8, fontWeight: 600, letterSpacing: 4, opacity: 0.8 }}>{idea.subtitle}</div>
+                    </div>
+                  </div>
+                  {/* Details below photo */}
+                  <div onClick={() => { setSelectedTemplate({ ...idea, name: idea.title, budget: idea.perPerson, icon: idea.location.slice(0,2).toUpperCase(), eventType: 'wedding' }); setView('detail'); }}
+                    style={{ padding: '14px 18px 16px', cursor: 'pointer' }}>
+                    <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 12, lineHeight: 1.5, marginBottom: 12 }}>{idea.desc}</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, fontWeight: 500 }}>{idea.duration}</span>
+                        <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
+                        <span style={{ color: '#FAFAF9', fontSize: 14, fontWeight: 700 }}>{idea.perPerson}<span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 10, fontWeight: 400 }}>/person</span></span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: idea.accentHue, fontSize: 11, fontWeight: 600 }}>
+                        Explore <span style={{ fontSize: 14 }}>→</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Plan Your Own — bottom card */}
+            <div onClick={() => setView('custom')} className="slide-up"
+              style={{
+                borderRadius: 20, overflow: 'hidden', cursor: 'pointer',
+                border: '1px dashed var(--border)', background: 'var(--bg-card)',
+                padding: '28px 22px', textAlign: 'center',
+                animationDelay: '0.6s',
+              }}>
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: 22, color: 'var(--text-muted)' }}>✦</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>Plan Your Own</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>Have a spot in mind? Build it from scratch.</div>
+            </div>
+          </div>
+
+          <div style={{ height: 20 }} />
+        </div>
+      );
+    }
+
+    // ═══════════════════════════════════════════
+    // NON-WEDDING: Keep original templates
+    // ═══════════════════════════════════════════
+    const filteredTemplates = EVENT_TEMPLATES.filter(t => {
+      if (user.eventType === 'guys-trip') return t.eventType === 'guys-trip' || t.eventType === 'general';
+      if (user.eventType === 'birthday') return t.eventType === 'birthday' || t.eventType === 'general';
+      return t.eventType === 'general' || t.eventType === user.eventType;
+    });
+
+    return (
+      <div className="screen-scroll" style={{ padding: '0 20px 20px' }}>
+        <div style={{ paddingTop: 16, marginBottom: 20 }}>
+          {activeEvent && <div onClick={() => setView('list')} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 12, fontWeight: 500 }}>← Back</div>}
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.3 }}>{activeEvent ? 'Add Another Event' : isGroom ? 'Pick a template' : 'Event Templates'}</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>{isGroom ? "Choose one — you can customize after" : "Pick a template, customize it, send it to the crew"}</p>
+        </div>
+        {filteredTemplates.map(t => (
+          <div key={t.id} className="card" style={{ marginBottom: 12, cursor: 'pointer' }}
+               onClick={() => { setSelectedTemplate(t); setView('detail'); }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 10, background: 'var(--surface-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: 'var(--accent)', flexShrink: 0 }}>{t.icon}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 15 }}>{t.name}</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>{t.duration} · {t.budget}</div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: 11, marginTop: 4 }}>{t.activities.join(' · ')}</div>
+              </div>
+              <span style={{ color: 'var(--text-dim)', fontSize: 20 }}>›</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // List view
+  return (
+    <div className="screen-scroll" style={{ padding: '0 20px 20px' }}>
+      <div style={{ paddingTop: 16, marginBottom: 20 }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.3 }}>Events</h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>{isGroom ? "Plan it. Fund it. Do it." : "Plan, build, and manage every moment"}</p>
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+        <button className="btn-primary btn-sm" style={{ flex: 1 }} onClick={() => { setView('templates'); setShowDestinations(false); }}>{user.eventType === 'wedding' ? 'Browse Destinations' : 'Use Template'}</button>
+        <button className="btn-secondary btn-sm" style={{ flex: 1 }} onClick={() => setView('custom')}>Plan Your Own</button>
+      </div>
+
+      {activeEvent ? (
+        <>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 12 }}>YOUR EVENTS</div>
+          <div className="card" style={{ marginBottom: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: 6 }}>
+              <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 15 }}>{activeEvent.name}</div>
+              <div style={{ background: 'var(--accent)', color: 'var(--surface-dark)', fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 'var(--radius-full)' }}>In Planning</div>
+            </div>
+            <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>{activeEvent.duration} · {activeEvent.location || user.location} · {activeEvent.budget}</div>
+          </div>
+        </>
+      ) : (
+        <div className="card" style={{ marginBottom: 16, textAlign: 'center', padding: '24px 20px', borderStyle: 'dashed' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: 14 }}>{isGroom ? "No events yet — pick a template above to get started" : "No events yet — create one to get started"}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── MARKETPLACE ──
+function MarketplaceScreen({ groomsmenReqs = [], isWedding = false }) {
+  const [activeCat, setActiveCat] = useState('All');
+
+  // Requirement-mapped marketplace items — these map to the groomsmen checklist
+  const REQ_MARKETPLACE = [
+    { id: 101, reqKey: 'tux', cat: 'Tux & Suits', name: "The Black Tux", initial: "BT", price: "$169+", rating: 4.8, reviews: 12400, url: "https://theblacktux.com", desc: "Premium rental suits & tuxedos delivered to your door", affiliate: "Partner" },
+    { id: 102, reqKey: 'tux', cat: 'Tux & Suits', name: "Menguin", initial: "MG", price: "$139+", rating: 4.6, reviews: 3200, url: "https://www.menguin.com", desc: "Modern fit tux rentals with free home try-on" },
+    { id: 103, reqKey: 'tux', cat: 'Tux & Suits', name: "SuitShop", initial: "SS", price: "$199+", rating: 4.7, reviews: 5100, url: "https://www.suitshop.com", desc: "Buy or rent — suits that actually fit", affiliate: "Partner" },
+    { id: 104, reqKey: 'shoes', cat: 'Shoes', name: "Allen Edmonds", initial: "AE", price: "$195+", rating: 4.8, reviews: 8900, url: "https://www.allenedmonds.com/wedding", desc: "Classic dress shoes — Park Avenue, Strand", affiliate: "Partner" },
+    { id: 105, reqKey: 'shoes', cat: 'Shoes', name: "Beckett Simonon", initial: "BS", price: "$149+", rating: 4.7, reviews: 2100, url: "https://www.beckettsimonon.com", desc: "Handcrafted leather shoes, direct-to-consumer" },
+    { id: 106, reqKey: 'shoes', cat: 'Shoes', name: "Thursday Boots", initial: "TB", price: "$149+", rating: 4.6, reviews: 6700, url: "https://thursdayboots.com", desc: "Dress boots & oxfords — quality at fair prices" },
+    { id: 107, reqKey: 'grooming', cat: 'Grooming', name: "Blind Barber", initial: "BB", price: "$45+", rating: 4.9, reviews: 890, url: "https://www.blindbarber.com", desc: "Premium barbershop — cuts, shaves, facials" },
+    { id: 108, reqKey: 'grooming', cat: 'Grooming', name: "Scotch Porter", initial: "SP", price: "$35+", rating: 4.7, reviews: 1540, url: "https://www.scotchporter.com", desc: "Grooming essentials kit — beard, skin, hair" },
+    { id: 109, reqKey: 'grooming', cat: 'Grooming', name: "Harry's Wedding Day Kit", initial: "HW", price: "$25", rating: 4.5, reviews: 3200, url: "https://www.harrys.com", desc: "Everything he needs for the big day" },
+    { id: 110, reqKey: 'gift', cat: 'Gifts', name: "Leather Dopp Kit — Personalized", initial: "DK", price: "$85", rating: 4.9, reviews: 456, url: "https://www.etsy.com/search?q=personalized+dopp+kit", desc: "Full-grain leather with monogram" },
+    { id: 111, reqKey: 'gift', cat: 'Gifts', name: "Custom Flask Set (8pc)", initial: "FS", price: "$120", rating: 4.7, reviews: 312, url: "https://www.etsy.com/search?q=groomsmen+flask+set", desc: "Engraved stainless steel set" },
+    { id: 112, reqKey: 'accessories', cat: 'Accessories', name: "The Tie Bar", initial: "TT", price: "$25+", rating: 4.8, reviews: 9800, url: "https://www.thetiebar.com", desc: "Ties, pocket squares, cufflinks — all under $30" },
+    { id: 113, reqKey: 'accessories', cat: 'Accessories', name: "Cufflinks Inc.", initial: "CI", price: "$35+", rating: 4.6, reviews: 2100, url: "https://www.cufflinks.com", desc: "Wedding-day cufflinks and accessories" },
+    { id: 114, reqKey: 'travel', cat: 'Travel', name: "Graduate Nashville", initial: "GN", price: "$189/night", rating: 4.7, reviews: 2340, url: "https://www.graduatehotels.com/nashville", desc: "Boutique hotel near Vanderbilt", affiliate: "Booking.com" },
+    { id: 115, reqKey: 'travel', cat: 'Travel', name: "Airbnb Group Stays", initial: "AB", price: "varies", rating: 4.6, reviews: 15000, url: "https://www.airbnb.com/s/Nashville/homes?group_size=6", desc: "Houses for the whole crew — split costs easy" },
+    { id: 116, reqKey: 'fitting', cat: 'Fittings', name: "The Black Tux — Showroom", initial: "BT", price: "Free", rating: 4.9, reviews: 4200, url: "https://theblacktux.com/showrooms", desc: "In-person fitting at 30+ locations nationwide" },
+    { id: 117, reqKey: 'rsvp', cat: 'Restaurants', name: "Husk Nashville", initial: "HN", price: "$$$$", rating: 4.7, reviews: 1205, url: "https://www.opentable.com/r/husk-nashville", desc: "Farm-to-table Southern cuisine — book for the crew", affiliate: "OpenTable" },
+    { id: 118, reqKey: 'rsvp', cat: 'Restaurants', name: "Kayne Prime", initial: "KP", price: "$$$$", rating: 4.9, reviews: 1870, url: "https://www.opentable.com/kayne-prime", desc: "Upscale steakhouse with private group dining", affiliate: "OpenTable" },
+    { id: 119, reqKey: 'rsvp', cat: 'Restaurants', name: "Bourbon Steak Nashville", initial: "BS", price: "$$$$", rating: 4.8, reviews: 1420, url: "https://www.opentable.com/r/bourbon-steak-nashville", desc: "Michael Mina's steakhouse at JW Marriott", affiliate: "OpenTable" },
+  ];
+
+  // Build categories from requirements
+  const reqCats = isWedding
+    ? ['All', ...Array.from(new Set(REQ_MARKETPLACE.filter(item => groomsmenReqs.includes(item.reqKey)).map(item => item.cat)))]
+    : ['All', 'Restaurants', 'Venues', 'Activities', 'Gifts', 'Grooming', 'Stays'];
+
+  // Filter items
+  const displayItems = isWedding
+    ? (activeCat === 'All'
+        ? REQ_MARKETPLACE.filter(item => groomsmenReqs.includes(item.reqKey))
+        : REQ_MARKETPLACE.filter(item => item.cat === activeCat && groomsmenReqs.includes(item.reqKey)))
+    : (activeCat === 'All' ? MARKETPLACE_ITEMS : MARKETPLACE_ITEMS.filter(m => m.cat === activeCat));
+
+  return (
+    <div className="screen-scroll" style={{ padding: '0 20px 20px' }}>
+      <div style={{ paddingTop: 16, marginBottom: 16 }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 24, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.5 }}>
+          Discover
+        </h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
+          {isWedding ? `Vendors, restaurants, and services for your crew` : 'Restaurants, venues, and experiences — curated for you'}
+        </p>
+      </div>
+
+      {/* Category tabs */}
+      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 12, marginBottom: 8 }}>
+        {reqCats.map(c => (
+          <div key={c} onClick={() => setActiveCat(c)}
+            style={{ padding: '6px 14px', borderRadius: 'var(--radius-full)', fontSize: 13, fontWeight: 500, cursor: 'pointer', whiteSpace: 'nowrap',
+                     background: activeCat === c ? 'var(--surface-dark)' : 'var(--bg-card)',
+                     color: activeCat === c ? '#fff' : 'var(--text-secondary)',
+                     border: `1px solid ${activeCat === c ? 'var(--surface-dark)' : 'var(--border)'}` }}>
+            {c}
+          </div>
+        ))}
+      </div>
+
+      {/* Items */}
+      {displayItems.map(item => (
+        <div key={item.id} className="card" onClick={() => item.url && window.open(item.url, '_blank')} style={{ marginBottom: 10, cursor: 'pointer' }}>
+          <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+            <div style={{ width: 52, height: 52, borderRadius: 'var(--radius-md)', background: 'var(--surface-dark)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: 'var(--accent)', letterSpacing: -0.5, flexShrink: 0 }}>{item.initial}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{item.name}</div>
+                <div style={{ color: 'var(--accent)', fontSize: 12, fontWeight: 600 }}>{item.price}</div>
+              </div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 11, marginTop: 2 }}>{item.desc}</div>
+              <div style={{ display: 'flex', gap: 8, marginTop: 4, alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600 }}>★ {item.rating}</span>
+                <span style={{ color: 'var(--text-dim)', fontSize: 11 }}>({item.reviews.toLocaleString()})</span>
+                {item.affiliate && <span style={{ background: 'var(--bg-secondary)', color: 'var(--text-muted)', fontSize: 9, padding: '2px 6px', borderRadius: 'var(--radius-full)', fontWeight: 600 }}>{item.affiliate}</span>}
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── AI CHAT ──
+function ChatScreen() {
+  const [messages, setMessages] = useState([{ role: 'ai', text: AI_RESPONSES.greeting }]);
+  const [input, setInput] = useState('');
+  const [typing, setTyping] = useState(false);
+  const scrollRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const suggestions = ["Plan the bachelor party", "Find spots in Nashville", "Gift ideas for the boys", "What's the budget looking like?"];
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+  }, [messages, typing]);
+
+  const send = (text) => {
+    if (!text.trim()) return;
+    const userMsg = { role: 'user', text: text.trim() };
+    setMessages(prev => [...prev, userMsg]);
+    setInput('');
+    setTyping(true);
+
+    setTimeout(() => {
+      const response = matchAI(text);
+      setMessages(prev => [...prev, { role: 'ai', text: response }]);
+      setTyping(false);
+    }, 800 + Math.random() * 1200);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', minHeight: 0 }}>
+      {/* Header */}
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+        <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: 'var(--surface-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 6 }}>
+          <Logo size={18} />
+        </div>
+        <div>
+          <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 15 }}>Grooms Concierge</div>
+          <div style={{ color: 'var(--success)', fontSize: 11, fontWeight: 500 }}>● Online</div>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div ref={scrollRef} style={{ flex: 1, overflow: 'auto', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 }}>
+        {messages.map((m, i) => (
+          <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
+            <div className={m.role === 'user' ? 'chat-user' : 'chat-ai'}>
+              {m.role === 'ai' && <div style={{ marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}><Logo size={10} /><span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 0.5 }}>GROOMS</span></div>}
+              <div style={{ whiteSpace: 'pre-line' }}>{m.text}</div>
+            </div>
+          </div>
+        ))}
+        {typing && (
+          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <div className="chat-ai" style={{ animation: 'pulse 1s infinite' }}>
+              <div style={{ marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}><Logo size={10} /><span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: 0.5 }}>GROOMS</span></div>
+              <span style={{ color: 'var(--text-muted)' }}>Thinking...</span>
+            </div>
+          </div>
+        )}
+
+        {/* Suggestions (only at start) */}
+        {messages.length <= 1 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+            {suggestions.map((s, i) => (
+              <div key={i} onClick={() => send(s)}
+                style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-full)',
+                         padding: '6px 14px', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer' }}>{s}</div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Input */}
+      <div style={{ padding: '12px 20px 8px', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <input ref={inputRef} className="input-field" placeholder="Ask Grooms anything..." value={input}
+                 onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send(input)}
+                 style={{ flex: 1, borderRadius: 'var(--radius-full)', padding: '12px 20px' }} />
+          <div onClick={() => send(input)}
+            style={{ width: 42, height: 42, borderRadius: '50%', background: 'var(--surface-dark)', display: 'flex', alignItems: 'center',
+                     justifyContent: 'center', cursor: 'pointer', fontSize: 16, flexShrink: 0, color: 'var(--accent)', fontWeight: 700 }}>→</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── CREW SCREEN ──
+function CrewScreen({ isGroom, eventType, onInviteSent, crewInvited, activeEvent, onNav }) {
+  const [showInvite, setShowInvite] = useState(!crewInvited);
+  const [inviteEmails, setInviteEmails] = useState('');
+  const [inviteSent, setInviteSent] = useState(crewInvited);
+  const isWedding = eventType === 'wedding';
+  const hasEvent = !!activeEvent;
+
+  const isEventInvite = isWedding && hasEvent;
+
+  const crew = [
+    { name: "Mike Thompson", role: isWedding ? "Groom" : "Organizer", status: "you", email: "mike@example.com" },
+    { name: "Jake Wilson", role: isWedding ? "Best Man" : "The Crew", status: "confirmed", email: "jake@example.com", groomsman: true },
+    { name: "Ryan Chen", role: isWedding ? "Groomsman" : "The Crew", status: "confirmed", email: "ryan@example.com", groomsman: true },
+    { name: "Dan Murphy", role: isWedding ? "Groomsman" : "The Crew", status: "pending", email: "dan@example.com", groomsman: true },
+    { name: "Tom Rodriguez", role: isWedding ? "Groomsman" : "The Crew", status: "confirmed", email: "tom@example.com", groomsman: true },
+    { name: "Chris Lee", role: isWedding ? "Groomsman" : "The Crew", status: "confirmed", email: "chris@example.com", groomsman: true },
+  ];
+
+  const statusColor = { you: 'var(--surface-dark)', confirmed: 'var(--success)', pending: 'var(--warning)' };
+
+  return (
+    <div className="screen-scroll" style={{ padding: '0 20px 20px' }}>
+      <div style={{ paddingTop: 16, marginBottom: 20 }}>
+        <div onClick={() => onNav('home')} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 12, fontWeight: 500 }}>← Back to Dashboard</div>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.3 }}>{isGroom ? 'The Boys' : 'The Crew'}</h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
+          {isEventInvite
+            ? `${crew.length} groomsmen auto-included · invite others to this event`
+            : `${crew.length} in · 4 confirmed${isWedding ? '' : ''}`}
+        </p>
+      </div>
+
+      {/* Auto-included notice for event context */}
+      {isEventInvite && crewInvited && (
+        <div className="card fade-in" style={{ marginBottom: 16, background: 'var(--bg-secondary)', border: 'none', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px' }}>
+          <div style={{ width: 28, height: 28, borderRadius: 6, background: 'var(--success-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--success)', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>✓</div>
+          <div>
+            <div style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 600 }}>Groomsmen auto-invited</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>All groomsmen are included. Add anyone else below.</div>
+          </div>
+        </div>
+      )}
+
+      <button className="btn-primary" style={{ marginBottom: 20 }} onClick={() => setShowInvite(!showInvite)}>
+        {showInvite ? 'Close' : isEventInvite ? '+ Invite others to this event' : isGroom ? '+ Add to the crew' : '+ Invite people'}
+      </button>
+
+      {/* Invite panel */}
+      {showInvite && (
+        <div className="card fade-in" style={{ marginBottom: 20, borderColor: 'var(--surface-dark)' }}>
+          <div style={{ color: 'var(--text-primary)', fontWeight: 600, marginBottom: 8 }}>
+            {isEventInvite ? 'Add more people to this event' : isGroom ? 'Get the boys in' : 'Send Invites'}
+          </div>
+          <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 12 }}>
+            {isEventInvite
+              ? "Invite friends who aren't in the wedding party — they'll only see this event."
+              : isGroom ? "Drop their emails — they'll get a link to join." : "Enter email addresses (one per line). They'll get a link to join."}
+          </p>
+          <textarea className="input-field" placeholder={"john@example.com\nmark@example.com\nsteve@example.com"} value={inviteEmails}
+                    onChange={e => setInviteEmails(e.target.value)} rows={4} style={{ resize: 'none', marginBottom: 12 }} />
+          {inviteSent ? (
+            <div className="fade-in" style={{ background: 'var(--success-bg)', border: '1px solid var(--success)', borderRadius: 'var(--radius-md)', padding: 12, textAlign: 'center' }}>
+              <div style={{ color: 'var(--success)', fontWeight: 600 }}>✓ Invites sent!</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 4 }}>{isEventInvite ? "They'll get an invite to this event only" : "They'll get an email with a link to join"} (prototype)</div>
+            </div>
+          ) : (
+            <button className="btn-primary" onClick={() => { setInviteSent(true); onInviteSent && onInviteSent(); }}>
+              Send {inviteEmails.split('\n').filter(e => e.trim()).length || 0} Invite{inviteEmails.split('\n').filter(e => e.trim()).length !== 1 ? 's' : ''}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Crew list */}
+      {isEventInvite && <div style={{ fontSize: 10, color: 'var(--text-dim)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8 }}>GROOMSMEN — AUTO-INCLUDED</div>}
+      {crew.map((m, i) => (
+        <div key={i} className="card" style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--bg-secondary)', border: `2px solid ${statusColor[m.status]}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)', fontWeight: 700, fontSize: 16 }}>
+            {m.name.split(' ').map(n => n[0]).join('')}
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{m.name}</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>{isEventInvite && m.groomsman ? 'Groomsman · Auto-included' : m.role}</div>
+          </div>
+          <div style={{ color: statusColor[m.status], fontSize: 11, fontWeight: 600, textTransform: 'capitalize' }}>{m.status}</div>
+        </div>
+      ))}
+
+      {/* Done — back to dashboard */}
+      <button className="btn-secondary" onClick={() => onNav('home')} style={{ marginTop: 12, marginBottom: 16 }}>
+        ← Back to Dashboard
+      </button>
+    </div>
+  );
+}
+
+// ── STYLE & DRESS CODE CONFIG ──
+function StyleConfigScreen({ isGroom, onSave, onSkip, existingStyle }) {
+  const COLOR_SWATCHES = [
+    { name: 'Navy', hex: '#1E3A5F' },
+    { name: 'Charcoal', hex: '#3D3D3D' },
+    { name: 'Burgundy', hex: '#722F37' },
+    { name: 'Hunter Green', hex: '#2D5A27' },
+    { name: 'Slate Blue', hex: '#6A7B8B' },
+    { name: 'Champagne', hex: '#D4AF37' },
+    { name: 'Dusty Rose', hex: '#C4A484' },
+    { name: 'Black', hex: '#1C1917' },
+    { name: 'Ivory', hex: '#FFFFF0' },
+    { name: 'Sage', hex: '#8A9A5B' },
+    { name: 'Lavender', hex: '#967BB6' },
+    { name: 'Terracotta', hex: '#C2693D' },
+  ];
+
+  const DRESS_CODES = [
+    { val: 'black-tie', label: 'Black Tie', desc: 'Tuxedos, formal gowns' },
+    { val: 'formal', label: 'Formal', desc: 'Dark suits, ties required' },
+    { val: 'semi-formal', label: 'Semi-Formal', desc: 'Suits, no tie necessary' },
+    { val: 'smart-casual', label: 'Smart Casual', desc: 'Sport coats, chinos OK' },
+    { val: 'casual', label: 'Casual', desc: 'Clean and put together' },
+  ];
+
+  const [selectedColors, setSelectedColors] = useState(existingStyle?.colors || []);
+  const [dressCode, setDressCode] = useState(existingStyle?.dressCode || '');
+  const [attireNotes, setAttireNotes] = useState(existingStyle?.attireNotes || '');
+  const [customColor, setCustomColor] = useState('');
+
+  const toggleColor = (hex) => {
+    setSelectedColors(prev =>
+      prev.includes(hex) ? prev.filter(c => c !== hex) : prev.length < 4 ? [...prev, hex] : prev
+    );
+  };
+
+  return (
+    <div className="screen-scroll" style={{ padding: '0 20px 20px' }}>
+      <div style={{ paddingTop: 16, marginBottom: 20 }}>
+        <div onClick={onSkip} style={{ color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginBottom: 12, fontWeight: 500 }}>← Back</div>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text-primary)', marginBottom: 4, fontWeight: 700, letterSpacing: -0.3 }}>
+          {isGroom ? 'Set the rules' : 'Style & Dress Code'}
+        </h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
+          {isGroom ? "Colors, dress code, the look — lock it in so the boys know what's up." : "Define wedding colors and attire so the crew shows up right."}
+        </p>
+      </div>
+
+      {/* Wedding Colors */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 12 }}>WEDDING COLORS</div>
+      <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 12 }}>Pick up to 4 — these show up in crew invites and event pages</p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
+        {COLOR_SWATCHES.map(c => {
+          const isSelected = selectedColors.includes(c.hex);
+          return (
+            <div key={c.hex} onClick={() => toggleColor(c.hex)} style={{ cursor: 'pointer', textAlign: 'center', width: 62 }}>
+              <div style={{
+                width: 48, height: 48, borderRadius: 12, background: c.hex, margin: '0 auto 4px',
+                border: isSelected ? '3px solid var(--surface-dark)' : c.hex === '#FFFFF0' ? '1px solid var(--border)' : '1px solid transparent',
+                boxShadow: isSelected ? '0 0 0 2px var(--accent)' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: '0.2s'
+              }}>
+                {isSelected && <span style={{ color: c.hex === '#1C1917' || c.hex === '#1E3A5F' || c.hex === '#3D3D3D' || c.hex === '#722F37' || c.hex === '#2D5A27' ? '#fff' : '#1C1917', fontSize: 16, fontWeight: 700 }}>✓</span>}
+              </div>
+              <div style={{ color: isSelected ? 'var(--text-primary)' : 'var(--text-muted)', fontSize: 10, fontWeight: isSelected ? 600 : 400 }}>{c.name}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Selected colors preview */}
+      {selectedColors.length > 0 && (
+        <div className="fade-in" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, padding: '10px 14px', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+          <span style={{ color: 'var(--text-muted)', fontSize: 12, fontWeight: 500 }}>Your palette:</span>
+          <div style={{ display: 'flex', gap: 4 }}>
+            {selectedColors.map((hex, i) => (
+              <div key={i} style={{ width: 24, height: 24, borderRadius: 6, background: hex, border: hex === '#FFFFF0' ? '1px solid var(--border)' : 'none' }} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Dress Code */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 12, marginTop: 8 }}>DRESS CODE</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+        {DRESS_CODES.map(d => (
+          <div key={d.val} className="card" onClick={() => setDressCode(d.val)}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, transition: '0.2s',
+                     border: dressCode === d.val ? '2px solid var(--surface-dark)' : '1px solid var(--border)',
+                     background: dressCode === d.val ? 'var(--accent-bg)' : 'var(--bg-card)', padding: '12px 14px' }}>
+            <div style={{ width: 36, height: 36, borderRadius: 8,
+                          background: dressCode === d.val ? 'var(--surface-dark)' : 'var(--bg-secondary)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: dressCode === d.val ? 'var(--accent)' : 'var(--text-muted)',
+                          fontSize: 11, fontWeight: 700 }}>
+              {d.val === 'black-tie' ? 'BT' : d.val === 'formal' ? 'FM' : d.val === 'semi-formal' ? 'SF' : d.val === 'smart-casual' ? 'SC' : 'CS'}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{d.label}</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>{d.desc}</div>
+            </div>
+            {dressCode === d.val && <span style={{ color: 'var(--surface-dark)', fontSize: 16, fontWeight: 700 }}>✓</span>}
+          </div>
+        ))}
+      </div>
+
+      {/* Specific Attire Notes */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 8 }}>ATTIRE NOTES FOR THE CREW</div>
+      <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 12 }}>{isGroom ? "Anything specific the boys need to know — colors to match, what to avoid, etc." : "Specific instructions for the groomsmen"}</p>
+      <textarea className="input-field" placeholder={isGroom ? "e.g. Navy suits, no black. Champagne ties. Brown shoes only." : "e.g. Navy suits with champagne ties. No black shoes."} value={attireNotes}
+                onChange={e => setAttireNotes(e.target.value)} rows={3} style={{ resize: 'none', marginBottom: 24 }} />
+
+      <button className="btn-primary" onClick={() => onSave({ colors: selectedColors, dressCode, attireNotes })} style={{ marginBottom: 10 }}>
+        {existingStyle ? 'Update Style Rules' : 'Save Style Rules'}
+      </button>
+      <button className="btn-secondary" onClick={onSkip}>
+        {existingStyle ? 'Cancel' : 'Skip for now'}
+      </button>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+// CARD SCREEN — Ramp-style expense tracking
+// ═══════════════════════════════════════════
+function CardScreen({ user, activeEvent }) {
+  const [tab, setTab] = useState('overview'); // overview | transactions | settings
+
+  const TRANSACTIONS = [
+    { date: 'Apr 28', merchant: 'Contribution — Chris L.', category: 'Inbound', amount: 300, event: 'Bachelor Party' },
+    { date: 'Apr 27', merchant: 'Contribution — Dan M.', category: 'Inbound', amount: 300, event: 'Bachelor Party' },
+    { date: 'Apr 26', merchant: 'The Black Tux', category: 'Tux Rental', amount: -189, event: 'Bachelor Party' },
+    { date: 'Apr 25', merchant: 'Contribution — Jake W.', category: 'Inbound', amount: 300, event: 'Bachelor Party' },
+    { date: 'Apr 25', merchant: 'Contribution — Ryan C.', category: 'Inbound', amount: 300, event: 'Bachelor Party' },
+    { date: 'Apr 24', merchant: 'Nashville Barrel House', category: 'Venue Deposit', amount: -425, event: 'Bachelor Party' },
+    { date: 'Apr 23', merchant: 'Contribution — Tom R.', category: 'Inbound', amount: 300, event: 'Bachelor Party' },
+  ];
+
+  const EVENT_SPEND = [
+    { name: 'Bachelor Party', spent: 614, collected: 1500, members: 5 },
+  ];
+
+  const totalBalance = 886;
+  const totalCollected = 1500;
+  const totalSpent = 614;
+
+  return (
+    <div className="screen-scroll" style={{ padding: 0 }}>
+      {/* Premium card hero — light brand bg so Onyx pops */}
+      <div style={{ padding: '16px 20px 20px', background: 'linear-gradient(180deg, #F5F5F0 0%, #E8E7E2 100%)' }}>
+        <div style={{
+          borderRadius: 16, overflow: 'hidden',
+          background: 'linear-gradient(145deg, #0A0A0A 0%, #1C1917 40%, #0A0A0A 100%)',
+          position: 'relative',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.2)',
+          aspectRatio: '1.586/1', maxHeight: 200, maxWidth: 320, margin: '0 auto',
+        }}>
+          <div style={{ position: 'absolute', inset: 0, opacity: 0.03,
+            background: 'repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 4px)',
+          }} />
+          <div style={{ position: 'relative', zIndex: 1, padding: '18px 22px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Logo size={14} />
+                  <span style={{ color: '#C4F438', fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 800, letterSpacing: 1 }}>VENTURA</span>
+                </div>
+                <div style={{ color: '#57534E', fontSize: 8, fontWeight: 600, letterSpacing: 2, marginTop: 2 }}>MEMBER SINCE 2026</div>
+              </div>
+              <div style={{ color: '#57534E', fontSize: 8, fontWeight: 700, letterSpacing: 2 }}>ONYX</div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '4px 0' }}>
+              <div style={{
+                width: 34, height: 26, borderRadius: 5,
+                background: 'linear-gradient(135deg, #C4F438 0%, #9BBF2D 50%, #C4F438 100%)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <div style={{ width: 16, height: 12, borderRadius: 2, border: '1px solid rgba(0,0,0,0.15)' }} />
+              </div>
+            </div>
+            <div>
+              <div style={{ color: '#78716C', fontSize: 9, fontWeight: 600, letterSpacing: 1.5 }}>AVAILABLE BALANCE</div>
+              <div style={{ color: '#FAFAF9', fontSize: 26, fontWeight: 800, fontFamily: 'var(--font-display)', letterSpacing: -1, lineHeight: 1.1 }}>
+                ${totalBalance.toLocaleString()}<span style={{ fontSize: 15, color: '#78716C' }}>.00</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 6 }}>
+                <div style={{ color: '#A8A29E', fontSize: 10, fontWeight: 600, letterSpacing: 1 }}>{(user.name || 'MIKE').toUpperCase()}</div>
+                <div style={{ color: '#57534E', fontSize: 10, fontWeight: 600 }}>•••• 4821</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick stats */}
+        <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+          <div style={{ flex: 1, background: 'var(--surface-dark)', borderRadius: 12, padding: '12px 14px', textAlign: 'center' }}>
+            <div style={{ color: '#78716C', fontSize: 9, fontWeight: 600, letterSpacing: 1 }}>COLLECTED</div>
+            <div style={{ color: '#C4F438', fontSize: 18, fontWeight: 800, marginTop: 2 }}>${totalCollected.toLocaleString()}</div>
+          </div>
+          <div style={{ flex: 1, background: 'var(--surface-dark)', borderRadius: 12, padding: '12px 14px', textAlign: 'center' }}>
+            <div style={{ color: '#78716C', fontSize: 9, fontWeight: 600, letterSpacing: 1 }}>SPENT</div>
+            <div style={{ color: '#FAFAF9', fontSize: 18, fontWeight: 800, marginTop: 2 }}>${totalSpent.toLocaleString()}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content area */}
+      <div style={{ background: 'var(--bg-primary)', padding: '20px 20px 24px', minHeight: 300 }}>
+        {/* Tab bar */}
+        <div style={{ display: 'flex', gap: 0, marginBottom: 16, background: 'var(--bg-secondary)', borderRadius: 10, padding: 3 }}>
+          {['overview', 'transactions', 'settings'].map(t => (
+            <div key={t} onClick={() => setTab(t)} style={{
+              flex: 1, textAlign: 'center', padding: '8px 0', borderRadius: 8, cursor: 'pointer',
+              background: tab === t ? 'var(--bg-card)' : 'transparent',
+              color: tab === t ? 'var(--text-primary)' : 'var(--text-dim)',
+              fontSize: 12, fontWeight: 600, boxShadow: tab === t ? 'var(--shadow-sm)' : 'none',
+              textTransform: 'capitalize'
+            }}>{t}</div>
+          ))}
+        </div>
+
+        {tab === 'overview' && (
+          <>
+            {/* Per-event breakdown */}
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10 }}>BY EVENT</div>
+            {EVENT_SPEND.map((ev, i) => (
+              <div key={i} className="card" style={{ marginBottom: 10, padding: '14px 16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{ev.name}</div>
+                  <div style={{ color: 'var(--text-dim)', fontSize: 11 }}>{ev.members} members</div>
+                </div>
+                <div style={{ display: 'flex', gap: 16 }}>
+                  <div>
+                    <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>COLLECTED</div>
+                    <div style={{ color: 'var(--success)', fontSize: 15, fontWeight: 700 }}>${ev.collected.toLocaleString()}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>SPENT</div>
+                    <div style={{ color: 'var(--text-primary)', fontSize: 15, fontWeight: 700 }}>${ev.spent.toLocaleString()}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>NET</div>
+                    <div style={{ color: ev.collected - ev.spent >= 0 ? 'var(--success)' : 'var(--danger)', fontSize: 15, fontWeight: 700 }}>
+                      {ev.collected - ev.spent >= 0 ? '+' : ''}${(ev.collected - ev.spent).toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Contributions */}
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10, marginTop: 8 }}>CONTRIBUTIONS</div>
+            <div className="card" style={{ padding: '10px 14px', marginBottom: 12 }}>
+              {[
+                { name: 'Jake Wilson', amount: '$300', status: 'paid' },
+                { name: 'Ryan Chen', amount: '$300', status: 'paid' },
+                { name: 'Tom Rodriguez', amount: '$300', status: 'paid' },
+                { name: 'Dan Murphy', amount: '$300', status: 'paid' },
+                { name: 'Chris Lee', amount: '$300', status: 'paid' },
+              ].map((c, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: c.status === 'paid' ? 'var(--success)' : 'var(--text-dim)' }} />
+                    <span style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 500 }}>{c.name}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ color: c.status === 'paid' ? 'var(--text-primary)' : 'var(--text-dim)', fontSize: 13, fontWeight: 600 }}>{c.amount}</span>
+                    <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 6px', borderRadius: 'var(--radius-full)',
+                      background: c.status === 'paid' ? 'var(--success-bg)' : 'var(--bg-secondary)',
+                      color: c.status === 'paid' ? 'var(--success)' : 'var(--text-dim)',
+                      textTransform: 'uppercase' }}>{c.status}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {tab === 'transactions' && (
+          <>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10 }}>RECENT ACTIVITY</div>
+            {TRANSACTIONS.map((tx, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: i < TRANSACTIONS.length - 1 ? '1px solid var(--border)' : 'none' }}>
+                <div style={{
+                  width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                  background: tx.amount > 0 ? 'var(--success-bg)' : 'var(--bg-secondary)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: tx.amount > 0 ? 'var(--success)' : 'var(--text-muted)', fontSize: 14
+                }}>{tx.amount > 0 ? '↓' : '↑'}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 600 }}>{tx.merchant}</div>
+                  <div style={{ color: 'var(--text-dim)', fontSize: 11 }}>{tx.date} · {tx.category}</div>
+                </div>
+                <div style={{
+                  color: tx.amount > 0 ? 'var(--success)' : 'var(--text-primary)',
+                  fontSize: 14, fontWeight: 700
+                }}>{tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount).toLocaleString()}</div>
+              </div>
+            ))}
+          </>
+        )}
+
+        {tab === 'settings' && (
+          <>
+            {/* Transparency — expense reports keep the user honest */}
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 12 }}>TRANSPARENCY</div>
+            {[
+              { icon: '📊', label: 'Send expense report', desc: 'Share full spending breakdown with the crew' },
+              { icon: '👁', label: 'Live visibility', desc: 'Crew can see every transaction in real time', badge: 'ON' },
+            ].map((action, i) => (
+              <div key={'t'+i} className="card" style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', cursor: 'pointer' }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>{action.icon}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 13 }}>{action.label}</div>
+                  <div style={{ color: 'var(--text-dim)', fontSize: 11 }}>{action.desc}</div>
+                </div>
+                {action.badge ? (
+                  <span style={{ fontSize: 9, fontWeight: 700, padding: '3px 8px', borderRadius: 'var(--radius-full)', background: 'var(--success-bg)', color: 'var(--success)' }}>{action.badge}</span>
+                ) : (
+                  <span style={{ color: 'var(--text-dim)', fontSize: 14 }}>→</span>
+                )}
+              </div>
+            ))}
+
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 12, marginTop: 16 }}>CARD ACTIONS</div>
+            {[
+              { icon: '↗', label: 'Transfer to bank', desc: 'Move available balance to your account' },
+              { icon: '↩', label: 'Refund contributors', desc: 'Return funds to crew members' },
+              { icon: '❄', label: 'Freeze card', desc: 'Temporarily disable all spending' },
+              { icon: '◎', label: 'Spending limits', desc: 'Set per-transaction or daily limits' },
+              { icon: '◈', label: 'Virtual card numbers', desc: 'Generate cards for specific vendors' },
+            ].map((action, i) => (
+              <div key={i} className="card" style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', cursor: 'pointer' }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>{action.icon}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 13 }}>{action.label}</div>
+                  <div style={{ color: 'var(--text-dim)', fontSize: 11 }}>{action.desc}</div>
+                </div>
+                <span style={{ color: 'var(--text-dim)', fontSize: 14 }}>→</span>
+              </div>
+            ))}
+
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10, marginTop: 16 }}>PHYSICAL CARD</div>
+            <div className="card" style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 42, height: 28, borderRadius: 4, background: 'linear-gradient(145deg, #292524, #1C1917)', border: '1px solid #3E3A36', flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 600 }}>Ventura Onyx — shipping</div>
+                <div style={{ color: 'var(--text-dim)', fontSize: 11 }}>Expected May 8, 2026</div>
+              </div>
+              <span style={{ fontSize: 9, fontWeight: 600, padding: '3px 8px', borderRadius: 'var(--radius-full)', background: 'var(--accent-bg)', color: 'var(--accent-text)' }}>IN TRANSIT</span>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+// GROOMSMAN DASHBOARD — What the invited groomsman sees
+// ═══════════════════════════════════════════
+function GroomsmanDashboard({ user, onNav, groomsmenReqs = [], weddingStyle, activeEvent }) {
+  const [pollVote, setPollVote] = useState(null);
+  const [pollSubmitted, setPollSubmitted] = useState(false);
+  const dressLabel = weddingStyle?.dressCode === 'black-tie' ? 'Black Tie' : weddingStyle?.dressCode === 'formal' ? 'Formal' : weddingStyle?.dressCode === 'semi-formal' ? 'Semi-Formal' : weddingStyle?.dressCode === 'smart-casual' ? 'Smart Casual' : weddingStyle?.dressCode === 'casual' ? 'Casual' : null;
+
+  // Personal checklist status
+  const reqLabels = { tux: '🤵 Tux / Suit Rental', shoes: '👞 Dress Shoes', grooming: '💈 Grooming', rsvp: '✉️ RSVP Confirmation', gift: '🎁 Group Gift', travel: '✈️ Travel & Lodging', fitting: '📐 Fitting Appt', accessories: '👔 Accessories' };
+  const [checklist, setChecklist] = useState(() => {
+    const c = {};
+    groomsmenReqs.forEach(key => { c[key] = false; });
+    return c;
+  });
+  const toggleCheck = (key) => setChecklist(prev => ({ ...prev, [key]: !prev[key] }));
+  const completedCount = Object.values(checklist).filter(Boolean).length;
+  const totalCount = Object.keys(checklist).length;
+  const pctDone = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+  // Mock poll options (would come from organizer)
+  const pollOptions = [
+    { id: 'nash-bourbon', title: 'Bourbon & Brotherhood', location: 'Nashville, TN', price: '$320-$450' },
+    { id: 'scottsdale-desert', title: 'Desert Kings', location: 'Scottsdale, AZ', price: '$400-$600' },
+    { id: 'miami-heat', title: 'South Beach Send-Off', location: 'Miami, FL', price: '$500-$800' },
+  ];
+
+  return (
+    <div className="screen-scroll" style={{ padding: '0 20px 20px' }}>
+      {/* Header */}
+      <div className="fade-in" style={{ paddingTop: 16, marginBottom: 16 }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text-primary)', fontWeight: 700, letterSpacing: -0.5 }}>
+          Hey, {user.name || 'Ryan'}.
+        </h1>
+        <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>
+          You're in the crew{user.eventType === 'wedding' ? " — here's what you need to handle" : ''}
+        </p>
+      </div>
+
+      {/* Wedding info card */}
+      {user.eventType === 'wedding' && (
+        <div className="card slide-up" style={{ marginBottom: 12, padding: 0, overflow: 'hidden' }}>
+          <div style={{ display: 'flex' }}>
+            <div style={{ flex: 1, padding: '12px 14px', borderRight: '1px solid var(--border)' }}>
+              <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>DRESS CODE</div>
+              <div style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 600, marginTop: 2 }}>{dressLabel || 'TBD'}</div>
+            </div>
+            <div style={{ flex: 1, padding: '12px 14px', borderRight: '1px solid var(--border)' }}>
+              <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>YOUR STATUS</div>
+              <div style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 600, marginTop: 2 }}>{pctDone}% done</div>
+            </div>
+            <div style={{ flex: 1, padding: '12px 14px' }}>
+              <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>CREW</div>
+              <div style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 600, marginTop: 2 }}>5 guys</div>
+            </div>
+          </div>
+          {weddingStyle?.colors?.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 14px', borderTop: '1px solid var(--border)' }}>
+              <span style={{ color: 'var(--text-dim)', fontSize: 11, fontWeight: 500 }}>Colors:</span>
+              {weddingStyle.colors.map((hex, i) => <div key={i} style={{ width: 18, height: 18, borderRadius: 4, background: hex, border: hex === '#FFFFF0' ? '1px solid var(--border)' : 'none' }} />)}
+              {weddingStyle.attireNotes && <span style={{ color: 'var(--text-dim)', fontSize: 10, marginLeft: 4, fontStyle: 'italic' }}>"{weddingStyle.attireNotes.substring(0, 25)}..."</span>}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Your Checklist */}
+      {totalCount > 0 && (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5 }}>YOUR CHECKLIST</div>
+            <div style={{ fontSize: 11, color: pctDone === 100 ? 'var(--success)' : 'var(--text-muted)', fontWeight: 600 }}>{completedCount} of {totalCount}</div>
+          </div>
+          <div style={{ height: 4, borderRadius: 2, background: 'var(--bg-secondary)', marginBottom: 10 }}>
+            <div style={{ width: `${pctDone}%`, height: '100%', borderRadius: 2, background: pctDone === 100 ? 'var(--success)' : 'var(--accent)', transition: '0.3s' }} />
+          </div>
+          <div className="card" style={{ padding: '6px 14px', marginBottom: 16 }}>
+            {groomsmenReqs.map((key, i) => (
+              <div key={key} onClick={() => toggleCheck(key)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: i < groomsmenReqs.length - 1 ? '1px solid var(--border)' : 'none', cursor: 'pointer' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 24, height: 24, borderRadius: 6, background: checklist[key] ? 'var(--success)' : 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 700, transition: '0.2s', flexShrink: 0 }}>
+                    {checklist[key] ? '✓' : ''}
+                  </div>
+                  <span style={{ color: checklist[key] ? 'var(--text-muted)' : 'var(--text-primary)', fontSize: 13, fontWeight: 500, textDecoration: checklist[key] ? 'line-through' : 'none' }}>{reqLabels[key] || key}</span>
+                </div>
+                <div onClick={(e) => { e.stopPropagation(); onNav('marketplace'); }} style={{ color: 'var(--accent-text)', fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 'var(--radius-full)', background: 'var(--accent-bg)', cursor: 'pointer' }}>Shop</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Poll — Vote on destination */}
+      {!activeEvent && (
+        <>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10 }}>VOTE — WHERE ARE WE GOING?</div>
+          <div className="card" style={{ marginBottom: 16, padding: '14px' }}>
+            {pollSubmitted ? (
+              <div className="fade-in" style={{ textAlign: 'center', padding: '8px 0' }}>
+                <div style={{ color: 'var(--success)', fontSize: 16, fontWeight: 700, marginBottom: 4 }}>✓ Vote submitted!</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>You picked {pollOptions.find(o => o.id === pollVote)?.title}. Waiting on the rest of the crew.</div>
+              </div>
+            ) : (
+              <>
+                <div style={{ color: 'var(--text-muted)', fontSize: 12, marginBottom: 10 }}>The organizer shortlisted 3 destinations. Pick your favorite:</div>
+                {pollOptions.map(opt => (
+                  <div key={opt.id} onClick={() => setPollVote(opt.id)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 'var(--radius-md)', marginBottom: 6, cursor: 'pointer', transition: '0.2s',
+                             border: pollVote === opt.id ? '2px solid var(--surface-dark)' : '1px solid var(--border)',
+                             background: pollVote === opt.id ? 'var(--accent-bg)' : 'var(--bg-card)' }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 8, background: pollVote === opt.id ? 'var(--surface-dark)' : 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: pollVote === opt.id ? 'var(--accent)' : 'var(--text-muted)', fontSize: 14, fontWeight: 700, flexShrink: 0 }}>
+                      {pollVote === opt.id ? '✓' : opt.title[0]}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 13 }}>{opt.title}</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>{opt.location} · {opt.price}/person</div>
+                    </div>
+                  </div>
+                ))}
+                <button className="btn-primary" style={{ marginTop: 8 }} disabled={!pollVote} onClick={() => setPollSubmitted(true)}
+                  {...(!pollVote ? {style: {marginTop: 8, opacity: 0.5, background: 'var(--surface-dark)', color: '#fff', border: 'none', padding: '14px 24px', borderRadius: 'var(--radius-full)', fontSize: 15, fontWeight: 600, cursor: 'default', width: '100%', fontFamily: 'var(--font-body)', letterSpacing: '-0.01em'}} : {})}>
+                  {pollVote ? 'Submit Vote' : 'Pick a destination'}
+                </button>
+              </>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Active event */}
+      {activeEvent && (
+        <div className="card" onClick={() => onNav('eventDetail')} style={{ marginBottom: 16, cursor: 'pointer' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{activeEvent.name}</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>{activeEvent.duration} · {activeEvent.budget}</div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ background: 'var(--accent)', color: 'var(--surface-dark)', fontSize: 9, fontWeight: 700, padding: '3px 8px', borderRadius: 'var(--radius-full)' }}>CONFIRMED</div>
+              <span style={{ color: 'var(--text-dim)', fontSize: 14 }}>→</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Discover CTA */}
+      <div className="card slide-up" onClick={() => onNav('marketplace')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
+        <div style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', background: 'var(--surface-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)', fontSize: 16, flexShrink: 0 }}>◎</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>Discover</div>
+          <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>Browse vendors, rentals, and restaurants for the crew</div>
+        </div>
+        <span style={{ color: 'var(--text-dim)', fontSize: 14 }}>→</span>
+      </div>
+
+      {/* Concierge */}
+      <div className="card slide-up" onClick={() => onNav('chat')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, background: 'var(--surface-dark)' }}>
+        <div style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', background: 'var(--surface-dark-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 7 }}><Logo size={20} /></div>
+        <div style={{ flex: 1 }}>
+          <div style={{ color: '#FAFAF9', fontWeight: 600, fontSize: 14 }}>Concierge</div>
+          <div style={{ color: '#78716C', fontSize: 11 }}>Questions about the event? Ask here.</div>
+        </div>
+        <span style={{ color: 'var(--accent)', fontSize: 16 }}>→</span>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+// EVENT DETAIL SCREEN
+// ═══════════════════════════════════════════
+function EventDetailScreen({ event, user, onNav, cardIssued, crewInvited }) {
+  const isWedding = event.eventType === 'wedding';
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteSent, setInviteSent] = useState(false);
+  const [requestsSent, setRequestsSent] = useState(false);
+
+  // Mock invitees for this event
+  const [invitees, setInvitees] = useState([
+    { name: 'Jake Wilson', status: 'accepted', contributed: true, amount: 300 },
+    { name: 'Ryan Chen', status: 'accepted', contributed: true, amount: 300 },
+    { name: 'Tom Rodriguez', status: 'accepted', contributed: true, amount: 300 },
+    { name: 'Dan Murphy', status: 'pending', contributed: false, amount: 0 },
+    { name: 'Chris Lee', status: 'invited', contributed: false, amount: 0 },
+  ]);
+  const totalBudget = event.budget ? parseInt(event.budget.replace(/[^0-9]/g, '')) || 1500 : 1500;
+  const totalCollected = invitees.reduce((s, i) => s + i.amount, 0);
+  const pctFunded = Math.min(100, Math.round((totalCollected / totalBudget) * 100));
+
+  return (
+    <div className="screen-scroll" style={{ padding: '0 20px 24px' }}>
+      {/* Back nav */}
+      <div onClick={() => onNav('home')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '14px 0 10px', cursor: 'pointer', color: 'var(--accent)' }}>
+        <span style={{ fontSize: 16 }}>←</span>
+        <span style={{ fontSize: 13, fontWeight: 600 }}>Dashboard</span>
+      </div>
+
+      {/* Event header */}
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <div style={{ color: 'var(--text-primary)', fontSize: 22, fontWeight: 700 }}>{event.name}</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 2 }}>{event.duration} · {event.budget}</div>
+          </div>
+          <div style={{ background: 'var(--accent)', color: 'var(--surface-dark)', fontSize: 9, fontWeight: 700, padding: '4px 10px', borderRadius: 'var(--radius-full)' }}>PLANNING</div>
+        </div>
+        {event.location && (
+          <div style={{ color: 'var(--text-dim)', fontSize: 12, marginTop: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span>📍</span> {event.location || user.location || 'TBD'}
+          </div>
+        )}
+        {event.activities && event.activities.length > 0 && (
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
+            {event.activities.map((a, i) => (
+              <span key={i} style={{ fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 'var(--radius-full)', background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>{a}</span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ═══ BUDGET & MONEY ═══ */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10 }}>
+        {event.splitCosts ? 'BUDGET & CARD' : 'BUDGET'}
+      </div>
+      {event.splitCosts ? (
+        <div className="card" style={{ marginBottom: 16, padding: '16px' }}>
+          {/* Ventura Onyx mini-preview */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, paddingBottom: 12, borderBottom: '1px solid var(--border)' }}>
+            <div style={{ width: 44, height: 28, borderRadius: 5, background: 'linear-gradient(135deg, #C4F438 0%, #9BBF2D 50%, #C4F438 100%)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 16, height: 12, borderRadius: 2, border: '1px solid rgba(0,0,0,0.15)' }} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 13 }}>Ventura Onyx</div>
+              <div style={{ color: 'var(--text-dim)', fontSize: 11 }}>Active for this event</div>
+            </div>
+            {cardIssued && (
+              <div onClick={() => onNav('card')} style={{ color: 'var(--accent)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>View →</div>
+            )}
+          </div>
+          {/* Collected vs Target */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+            <div>
+              <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>COLLECTED</div>
+              <div style={{ color: 'var(--success)', fontSize: 20, fontWeight: 700 }}>${totalCollected.toLocaleString()}</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>PER PERSON</div>
+              <div style={{ color: 'var(--text-secondary)', fontSize: 20, fontWeight: 700 }}>${Math.round(totalBudget / invitees.length).toLocaleString()}</div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 600, letterSpacing: 0.5 }}>TARGET</div>
+              <div style={{ color: 'var(--text-primary)', fontSize: 20, fontWeight: 700 }}>${totalBudget.toLocaleString()}</div>
+            </div>
+          </div>
+          {/* Progress bar */}
+          <div style={{ height: 6, background: 'var(--bg-secondary)', borderRadius: 3, overflow: 'hidden', marginBottom: 6 }}>
+            <div style={{ height: '100%', width: pctFunded + '%', background: 'var(--accent)', borderRadius: 3, transition: 'width 0.4s ease' }} />
+          </div>
+          <div style={{ color: 'var(--text-dim)', fontSize: 11, textAlign: 'right', marginBottom: 12 }}>{pctFunded}% funded · {invitees.filter(i => i.contributed).length} of {invitees.length} paid</div>
+          {/* Quick actions row */}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <div onClick={() => onNav('card')} style={{ flex: 1, background: 'var(--surface-dark)', padding: '10px', borderRadius: 'var(--radius)', cursor: 'pointer', textAlign: 'center' }}>
+              <span style={{ color: 'var(--accent)', fontSize: 12, fontWeight: 600 }}>💳 Transactions</span>
+            </div>
+            <div style={{ flex: 1, background: 'var(--bg-secondary)', padding: '10px', borderRadius: 'var(--radius)', cursor: 'pointer', textAlign: 'center' }}>
+              <span style={{ color: 'var(--text-secondary)', fontSize: 12, fontWeight: 600 }}>📊 Spending</span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="card" style={{ marginBottom: 16, padding: '16px', borderStyle: 'dashed' }}>
+          <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14, marginBottom: 4 }}>Set up cost splitting</div>
+          <div style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 10 }}>Activate the Ventura Onyx to collect contributions from the crew and track spending for this event.</div>
+          <div onClick={() => { event.splitCosts = true; onNav('eventDetail'); }} style={{ background: 'var(--accent)', color: 'var(--surface-dark)', fontWeight: 700, fontSize: 12, padding: '10px', borderRadius: 'var(--radius)', cursor: 'pointer', textAlign: 'center' }}>
+            Activate Ventura Onyx
+          </div>
+        </div>
+      )}
+
+      {/* Invitees */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10 }}>
+        {isWedding ? 'THE BOYS' : 'CREW'} · {invitees.length}
+      </div>
+      <div className="card" style={{ padding: '6px 14px', marginBottom: 16 }}>
+        {invitees.map((inv, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: i < invitees.length - 1 ? '1px solid var(--border)' : 'none' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: inv.status === 'accepted' ? 'var(--accent-bg)' : 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: inv.status === 'accepted' ? 'var(--accent-text)' : 'var(--text-dim)' }}>
+                {inv.name.split(' ').map(n => n[0]).join('')}
+              </div>
+              <div>
+                <div style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 600 }}>{inv.name}</div>
+                <div style={{ color: 'var(--text-dim)', fontSize: 10 }}>
+                  {inv.status === 'accepted' ? 'Accepted' : inv.status === 'pending' ? 'Pending RSVP' : 'Invited'}
+                </div>
+              </div>
+            </div>
+            {event.splitCosts && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                {inv.contributed ? (
+                  <>
+                    <span style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 600 }}>${inv.amount}</span>
+                    <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 6px', borderRadius: 'var(--radius-full)', background: 'var(--success-bg)', color: 'var(--success)' }}>PAID</span>
+                  </>
+                ) : (
+                  <span style={{ fontSize: 9, fontWeight: 600, padding: '2px 6px', borderRadius: 'var(--radius-full)', background: 'var(--bg-secondary)', color: 'var(--text-dim)' }}>UNPAID</span>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Invite more */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10 }}>INVITE MORE</div>
+      <div className="card" style={{ padding: '14px', marginBottom: 16 }}>
+        {inviteSent ? (
+          <div style={{ textAlign: 'center', padding: '8px 0' }}>
+            <div style={{ color: 'var(--success)', fontSize: 14, fontWeight: 600, marginBottom: 4 }}>Invite sent!</div>
+            <div onClick={() => setInviteSent(false)} style={{ color: 'var(--accent)', fontSize: 12, cursor: 'pointer' }}>Send another</div>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} placeholder="Email or phone" style={{ flex: 1, background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '10px 12px', color: 'var(--text-primary)', fontSize: 13, outline: 'none' }} />
+            <div onClick={() => { if (inviteEmail.trim()) { setInviteSent(true); setInviteEmail(''); } }} style={{ background: 'var(--accent)', color: 'var(--surface-dark)', fontWeight: 700, fontSize: 12, padding: '10px 16px', borderRadius: 'var(--radius)', cursor: 'pointer', display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>Send</div>
+          </div>
+        )}
+      </div>
+
+      {/* Request money — if splitCosts but not yet fully funded */}
+      {event.splitCosts && (
+        <>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10 }}>COLLECT FUNDS</div>
+          <div className="card" style={{ marginBottom: 16, padding: '16px' }}>
+            <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14, marginBottom: 6 }}>Request contributions</div>
+            <div style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 12 }}>
+              {requestsSent
+                ? 'Payment requests sent! Waiting for the crew to contribute.'
+                : `Send payment requests to crew members who haven't paid yet. Each person owes $${Math.round(totalBudget / invitees.length).toLocaleString()}.`}
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {requestsSent ? (
+                <div style={{ flex: 1, background: 'var(--success-bg)', border: '1px solid var(--success)', color: 'var(--success)', fontWeight: 700, fontSize: 12, padding: '12px', borderRadius: 'var(--radius)', textAlign: 'center' }}>
+                  ✓ Requests Sent — {invitees.filter(i => !i.contributed).length} pending
+                </div>
+              ) : (
+                <div onClick={() => setRequestsSent(true)} style={{ flex: 1, background: 'var(--accent)', color: 'var(--surface-dark)', fontWeight: 700, fontSize: 12, padding: '12px', borderRadius: 'var(--radius)', cursor: 'pointer', textAlign: 'center' }}>
+                  Send Requests ({invitees.filter(i => !i.contributed).length} pending)
+                </div>
+              )}
+              {cardIssued && (
+                <div onClick={() => onNav('card')} style={{ padding: '12px 16px', borderRadius: 'var(--radius)', background: 'var(--bg-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 13 }}>💳</span>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: 12, fontWeight: 600 }}>Card</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Quick actions */}
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: 1.5, marginBottom: 10 }}>ACTIONS</div>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+        {[
+          { icon: '📋', label: 'Checklist' },
+          { icon: '📍', label: 'Venues' },
+          { icon: '💬', label: 'Group Chat' },
+          { icon: '🛍', label: 'Discover', action: () => onNav('marketplace') },
+        ].map((a, i) => (
+          <div key={i} className="card" onClick={a.action || (() => {})} style={{ flex: 1, padding: '14px 8px', textAlign: 'center', cursor: 'pointer' }}>
+            <div style={{ fontSize: 20, marginBottom: 4 }}>{a.icon}</div>
+            <div style={{ color: 'var(--text-secondary)', fontSize: 10, fontWeight: 600 }}>{a.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+// MAIN APP
+// ═══════════════════════════════════════════
+function App() {
+  const [screen, setScreen] = useState('splash'); // splash | onboarding | main
+  const [tab, setTab] = useState('home');
+  const [user, setUser] = useState({ name: '', role: 'groom', eventType: 'wedding', partnerName: '', eventDate: '', location: 'Nashville, TN' });
+  const [activeEvent, setActiveEvent] = useState(null);
+  const [crewInvited, setCrewInvited] = useState(false);
+  const [weddingStyle, setWeddingStyle] = useState(null); // { colors: [], dressCode: '', attireNotes: '' }
+  const [groomsmenReqs, setGroomsmenReqs] = useState(['tux', 'shoes', 'rsvp']); // default requirements
+  const [showStyleConfig, setShowStyleConfig] = useState(false);
+
+  const handleOnboardingComplete = (userData) => {
+    const { weddingStyle: style, crewInvited: crewWasInvited, groomsmenReqs: reqs, ...userFields } = userData;
+    setUser(userFields);
+    if (style) setWeddingStyle(style);
+    if (reqs) setGroomsmenReqs(reqs);
+    if (crewWasInvited) setCrewInvited(true);
+    setScreen('main');
+  };
+
+  const [cardIssued, setCardIssued] = useState(false);
+  const [pastEvents, setPastEvents] = useState([]); // future: completed events move here
+
+  const handleCreateEvent = (event) => {
+    setActiveEvent(event);
+    if (event.splitCosts && !cardIssued) setCardIssued(true);
+    setTab('home');
+  };
+
+  const handleStyleSave = (style) => {
+    setWeddingStyle(style);
+    setShowStyleConfig(false);
+    setTab('home');
+  };
+
+  const handleStyleSkip = () => {
+    setShowStyleConfig(false);
+    setTab('home');
+  };
+
+  const isGroom = user.role === 'groom';
+  const isGroomsman = user.role === 'groomsman';
+  const isBride = user.role === 'bride';
+  const isOrganizer = isGroom || isBride; // can manage events, crew, style
+
+  const renderMain = () => {
+    // Groomsman gets his own dashboard
+    if (isGroomsman) {
+      switch (tab) {
+        case 'home': return <GroomsmanDashboard user={user} onNav={setTab} groomsmenReqs={groomsmenReqs} weddingStyle={weddingStyle} activeEvent={activeEvent} />;
+        case 'marketplace': return <MarketplaceScreen groomsmenReqs={groomsmenReqs} isWedding={user.eventType === 'wedding'} />;
+        case 'chat': return <ChatScreen />;
+        case 'eventDetail': return activeEvent ? <EventDetailScreen event={activeEvent} user={user} onNav={setTab} cardIssued={false} crewInvited={true} /> : <GroomsmanDashboard user={user} onNav={setTab} groomsmenReqs={groomsmenReqs} weddingStyle={weddingStyle} activeEvent={activeEvent} />;
+        default: return <GroomsmanDashboard user={user} onNav={setTab} groomsmenReqs={groomsmenReqs} weddingStyle={weddingStyle} activeEvent={activeEvent} />;
+      }
+    }
+    // Style config intercept — shown after wedding event creation
+    if (showStyleConfig) {
+      return <StyleConfigScreen isGroom={isGroom} onSave={handleStyleSave} onSkip={handleStyleSkip} existingStyle={weddingStyle} />;
+    }
+    switch (tab) {
+      case 'home': return <HomeScreen user={user} onNav={setTab} isGroom={isGroom || isBride} activeEvent={activeEvent} crewInvited={crewInvited} weddingStyle={weddingStyle} groomsmenReqs={groomsmenReqs} onEditStyle={() => setShowStyleConfig(true)} cardIssued={cardIssued} pastEvents={pastEvents} />;
+      case 'events': return <EventsScreen onNav={setTab} onCreateEvent={handleCreateEvent} activeEvent={activeEvent} isGroom={isGroom} user={user} isBride={isBride} />;
+      case 'eventDetail': return <EventDetailScreen event={activeEvent} user={user} onNav={setTab} cardIssued={cardIssued} crewInvited={crewInvited} />;
+      case 'card': return <CardScreen user={user} activeEvent={activeEvent} />;
+      case 'marketplace': return <MarketplaceScreen groomsmenReqs={groomsmenReqs} isWedding={user.eventType === 'wedding'} />;
+      case 'chat': return <ChatScreen />;
+      case 'crew': return <CrewScreen isGroom={isGroom || isBride} eventType={activeEvent ? activeEvent.eventType : user.eventType} onInviteSent={() => setCrewInvited(true)} crewInvited={crewInvited} activeEvent={activeEvent} onNav={setTab} />;
+      default: return <HomeScreen user={user} onNav={setTab} isGroom={isGroom || isBride} activeEvent={activeEvent} crewInvited={crewInvited} weddingStyle={weddingStyle} groomsmenReqs={groomsmenReqs} onEditStyle={() => setShowStyleConfig(true)} cardIssued={cardIssued} pastEvents={pastEvents} />;
+    }
+  };
+
+  return (
+    <div className="phone-frame">
+      {screen === 'splash' && <SplashScreen onStart={() => setScreen('onboarding')} />}
+      {screen === 'onboarding' && <OnboardingScreen onComplete={handleOnboardingComplete} />}
+      {screen === 'main' && (
+        <div className="screen">
+          <StatusBar />
+          {renderMain()}
+          <BottomNav active={tab} onNav={setTab} hasCard={cardIssued} isGroomsman={isGroomsman} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+</script>
+</body>
+</html>
