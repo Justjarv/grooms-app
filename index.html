@@ -633,8 +633,9 @@ function AuthScreen({ onComplete, initialTab }) {
     window.gTrack(event, { email: authEmail, name: authTab === 'signup' ? authName : undefined });
     // Identify the user in PostHog so signups appear in People with name + email attached.
     // Distinct ID is the email so the same user is recognized across sessions.
+    // Guard: only identify when we have a real email (Google SSO button has none yet).
     try {
-      if (window.posthog && posthog.identify) {
+      if (authEmail && window.posthog && posthog.identify) {
         const props = { email: authEmail };
         if (authTab === 'signup' && authName) props.name = authName;
         posthog.identify(authEmail, props, { $set: props });
