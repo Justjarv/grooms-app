@@ -450,12 +450,12 @@ function HeroHandledBeat() {
         animation: 'fadeInUp 0.5s ease-out both',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 11, color: 'var(--accent)', letterSpacing: 1 }}>VENTURA</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11, color: 'var(--accent)', letterSpacing: 2.5 }}>VENTURA</span>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: 7, color: 'var(--text-muted)', letterSpacing: 1.5, fontWeight: 700 }}>ONYX</span>
         </div>
         <div style={{ textAlign: 'left' }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 7, color: 'var(--text-muted)', letterSpacing: 1, fontWeight: 600 }}>BALANCE</div>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: 'var(--bone-on-dark)', letterSpacing: -0.5, lineHeight: 1.1 }}>${bal.toLocaleString()}</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 22, color: 'var(--bone-on-dark)', letterSpacing: -0.5, lineHeight: 1.1 }}>${bal.toLocaleString()}</div>
         </div>
       </div>
       <div style={{
@@ -630,7 +630,16 @@ function AuthScreen({ onComplete, initialTab }) {
   const handleAuth = () => {
     setLoading(true);
     const event = authTab === 'signup' ? 'auth_signup' : 'auth_signin';
-    window.gTrack(event, { email: authEmail });
+    window.gTrack(event, { email: authEmail, name: authTab === 'signup' ? authName : undefined });
+    // Identify the user in PostHog so signups appear in People with name + email attached.
+    // Distinct ID is the email so the same user is recognized across sessions.
+    try {
+      if (window.posthog && posthog.identify) {
+        const props = { email: authEmail };
+        if (authTab === 'signup' && authName) props.name = authName;
+        posthog.identify(authEmail, props, { $set: props });
+      }
+    } catch (e) { /* posthog blocked or not loaded — silently continue */ }
     setTimeout(() => {
       onComplete({ name: authTab === 'signup' ? authName : '', email: authEmail });
     }, 800);
@@ -2313,6 +2322,7 @@ function MarketplaceScreen({ groomsmenReqs = [], isWedding = false, isGroomsman 
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [checkoutDone, setCheckoutDone] = useState(false);
+  const [detailItem, setDetailItem] = useState(null); // in-app vendor detail sheet
 
   const addToCart = (item) => {
     if (!cart.find(c => c.id === item.id)) {
@@ -2429,9 +2439,9 @@ function MarketplaceScreen({ groomsmenReqs = [], isWedding = false, isGroomsman 
         return (
           <div key={item.id} className="card" style={{ marginBottom: 10 }}>
             <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-              <div onClick={() => item.url && window.open(item.url, '_blank')} style={{ width: 52, height: 52, borderRadius: 2, background: 'var(--surface-dark)',
+              <div onClick={() => { setDetailItem(item); window.gTrack('marketplace_item_opened', { id: item.id, name: item.name, cat: item.cat }); }} style={{ width: 52, height: 52, borderRadius: 2, background: 'var(--surface-dark)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: 'var(--accent)', letterSpacing: -0.5, flexShrink: 0, cursor: 'pointer' }}>{item.initial}</div>
-              <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => item.url && window.open(item.url, '_blank')}>
+              <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => { setDetailItem(item); window.gTrack('marketplace_item_opened', { id: item.id, name: item.name, cat: item.cat }); }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                   <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{item.name}</div>
                   <div style={{ color: 'var(--accent)', fontSize: 12, fontWeight: 600 }}>{item.price}</div>
@@ -2456,6 +2466,94 @@ function MarketplaceScreen({ groomsmenReqs = [], isWedding = false, isGroomsman 
         <div onClick={() => setShowCart(true)} style={{ position: 'sticky', bottom: 12, left: 20, right: 20, margin: '12px 0 0', padding: '12px 20px', borderRadius: 2, background: 'var(--surface-dark)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
           <span style={{ color: 'var(--bone-on-dark)', fontSize: 14, fontWeight: 600 }}>🛒 {cart.length} item{cart.length !== 1 ? 's' : ''}</span>
           <span style={{ color: 'var(--accent)', fontSize: 13, fontWeight: 700 }}>View Cart →</span>
+        </div>
+      )}
+
+      {/* ── In-app vendor detail sheet ── */}
+      {detailItem && (
+        <div onClick={() => setDetailItem(null)} style={{
+          position: 'absolute', inset: 0, zIndex: 50,
+          background: 'rgba(8,9,11,0.55)',
+          display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+          animation: 'fadeIn 0.2s ease-out',
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            width: '100%', maxHeight: '92%', overflowY: 'auto',
+            background: 'var(--bg-primary)',
+            borderTopLeftRadius: 8, borderTopRightRadius: 8,
+            animation: 'slideUp 0.3s ease-out',
+            boxShadow: '0 -8px 30px rgba(0,0,0,0.25)',
+          }}>
+            {/* Drag handle */}
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 8px' }}>
+              <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border)' }} />
+            </div>
+            {/* Hero — monogram tile */}
+            <div style={{
+              height: 160, background: 'var(--surface-dark)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              position: 'relative',
+            }}>
+              <div style={{
+                fontFamily: 'var(--font-display)', fontSize: 80, fontWeight: 800,
+                color: 'var(--accent)', letterSpacing: -3, lineHeight: 1,
+              }}>{detailItem.initial}</div>
+              <div onClick={() => setDetailItem(null)} style={{
+                position: 'absolute', top: 12, right: 12,
+                width: 32, height: 32, borderRadius: '50%',
+                background: 'rgba(255,255,255,0.08)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer',
+                color: 'var(--bone-on-dark)', fontSize: 16, fontWeight: 600,
+              }}>✕</div>
+            </div>
+            {/* Content */}
+            <div style={{ padding: '20px 24px 28px' }}>
+              <div style={{
+                fontFamily: 'var(--font-mono)', fontSize: 9, fontWeight: 500,
+                letterSpacing: '0.22em', color: 'var(--text-muted)',
+                textTransform: 'uppercase', marginBottom: 6,
+              }}>{detailItem.cat}</div>
+              <h2 style={{
+                fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 800,
+                color: 'var(--text-primary)', letterSpacing: -0.5, lineHeight: 1.1,
+                marginBottom: 8,
+              }}>{detailItem.name}</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18, flexWrap: 'wrap' }}>
+                <span style={{ color: 'var(--accent)', fontSize: 16, fontWeight: 700 }}>{detailItem.price}</span>
+                <span style={{ color: 'var(--text-dim)' }}>·</span>
+                <span style={{ color: 'var(--text-secondary)', fontSize: 13, fontWeight: 600 }}>★ {detailItem.rating}</span>
+                <span style={{ color: 'var(--text-dim)', fontSize: 13 }}>({detailItem.reviews.toLocaleString()} reviews)</span>
+              </div>
+              <p style={{
+                color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.55,
+                marginBottom: 18, fontFamily: 'var(--font-editorial)',
+                fontStyle: 'italic', fontWeight: 300,
+              }}>{detailItem.desc}</p>
+              {detailItem.affiliate && (
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '10px 14px', borderRadius: 2,
+                  background: 'var(--bg-secondary)', border: '1px solid var(--border)',
+                  marginBottom: 18,
+                }}>
+                  <div style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 9, fontWeight: 500,
+                    letterSpacing: '0.18em', color: 'var(--text-muted)',
+                  }}>BOOKABLE VIA</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{detailItem.affiliate}</div>
+                </div>
+              )}
+              <button onClick={() => { addToCart(detailItem); window.gTrack('marketplace_added_to_plan', { id: detailItem.id }); setDetailItem(null); }} className="btn-primary" style={{ marginBottom: 10 }}>
+                {cart.find(c => c.id === detailItem.id) ? 'ADDED TO PLAN ✓' : 'ADD TO PLAN'}
+              </button>
+              {detailItem.url && (
+                <button onClick={() => { window.gTrack('marketplace_external_click', { id: detailItem.id, affiliate: detailItem.affiliate || null }); window.open(detailItem.url, '_blank'); }} className="btn-secondary">
+                  {detailItem.affiliate ? `BOOK ON ${detailItem.affiliate.toUpperCase()} →` : 'VISIT WEBSITE →'}
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -2886,7 +2984,7 @@ function CardScreen({ user, activeEvent }) {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Logo size={14} />
-                  <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 800, letterSpacing: 1 }}>VENTURA</span>
+                  <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, letterSpacing: 3 }}>VENTURA</span>
                 </div>
                 <div style={{ color: 'var(--text-secondary)', fontSize: 8, fontWeight: 600, letterSpacing: 2, marginTop: 2 }}>MEMBER SINCE 2026</div>
               </div>
@@ -2904,12 +3002,12 @@ function CardScreen({ user, activeEvent }) {
             </div>
             <div>
               <div style={{ color: 'var(--text-muted)', fontSize: 9, fontWeight: 600, letterSpacing: 1.5 }}>AVAILABLE BALANCE</div>
-              <div style={{ color: 'var(--bone-on-dark)', fontSize: 26, fontWeight: 800, fontFamily: 'var(--font-display)', letterSpacing: -1, lineHeight: 1.1 }}>
+              <div style={{ color: 'var(--bone-on-dark)', fontSize: 26, fontWeight: 600, fontFamily: 'var(--font-mono)', letterSpacing: -0.5, lineHeight: 1.1 }}>
                 ${totalBalance.toLocaleString()}<span style={{ fontSize: 15, color: 'var(--text-muted)' }}>.00</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 6 }}>
-                <div style={{ color: 'var(--text-dim)', fontSize: 10, fontWeight: 600, letterSpacing: 1 }}>{(user.name || 'MIKE').toUpperCase()}</div>
-                <div style={{ color: 'var(--text-secondary)', fontSize: 10, fontWeight: 600 }}>•••• 4821</div>
+                <div style={{ color: 'var(--text-dim)', fontSize: 10, fontWeight: 600, letterSpacing: 1.5, fontFamily: 'var(--font-mono)' }}>{(user.name || 'MIKE').toUpperCase()}</div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: 11, fontWeight: 500, letterSpacing: 2.5, fontFamily: 'var(--font-mono)' }}>•••• 4821</div>
               </div>
             </div>
           </div>
